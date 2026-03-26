@@ -1,7 +1,7 @@
 package owmii.losttrinkets.client.screen;
 
 import net.minecraft.client.util.InputMappings;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
 import owmii.lib.client.screen.ScreenBase;
 import owmii.losttrinkets.client.handler.KeyHandler;
 

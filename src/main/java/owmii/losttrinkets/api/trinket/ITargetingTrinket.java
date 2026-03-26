@@ -1,7 +1,7 @@
 package owmii.losttrinkets.api.trinket;
 
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 
 public interface ITargetingTrinket extends ITrinket {
     /**
@@ -12,5 +12,5 @@ public interface ITargetingTrinket extends ITrinket {
      * @param player      Player that has this trinket activated
      * @param notAttacked If the mob has not been attacked by the player
      */
-    boolean preventTargeting(MobEntity mob, PlayerEntity player, boolean notAttacked);
+    boolean preventTargeting(Mob mob, Player player, boolean notAttacked);
 }

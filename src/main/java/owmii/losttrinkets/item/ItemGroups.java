@@ -1,17 +1,28 @@
 package owmii.losttrinkets.item;
 
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import owmii.losttrinkets.LostTrinkets;
 
-public class ItemGroups {
-    public static final ItemGroup MAIN = new ItemGroup(LostTrinkets.MOD_ID) {
-        @Override
-        @OnlyIn(Dist.CLIENT)
-        public ItemStack createIcon() {
-            return new ItemStack(Itms.CREEPO);
-        }
-    };
+public final class ItemGroups {
+    public static final DeferredRegister<CreativeModeTab> REG =
+            DeferredRegister.create(ForgeRegistries.CREATIVE_MODE_TABS, LostTrinkets.MOD_ID);
+    public static final RegistryObject<CreativeModeTab> MAIN = REG.register(LostTrinkets.MOD_ID, () ->
+            CreativeModeTab.builder()
+                    .title(Component.translatable("itemGroup." + LostTrinkets.MOD_ID))
+                    .icon(() -> new ItemStack(Itms.CREEPO))
+                    .displayItems((parameters, output) -> Itms.REG.forEach(output::accept))
+                    .build());
+
+    private ItemGroups() {
+    }
+
+    public static void init(IEventBus bus) {
+        REG.register(bus);
+    }
 }

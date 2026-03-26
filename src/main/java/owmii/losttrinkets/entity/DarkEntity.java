@@ -1,77 +1,76 @@
 package owmii.losttrinkets.entity;
 
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.World;
-import owmii.lib.util.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Vex;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-public class DarkEntity extends CreatureEntity {
+public abstract class DarkEntity extends Vex {
     @Nullable
     protected UUID owner;
     @Nullable
-    protected PlayerEntity player;
+    protected Player player;
 
-    public DarkEntity(EntityType<? extends CreatureEntity> type, World world) {
-        super(type, world);
+    protected DarkEntity(EntityType<? extends Vex> type, Level level) {
+        super(type, level);
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (!this.world.isRemote) {
+        if (!level().isClientSide) {
             if (this.owner == null) {
                 vanish();
-            } else {
-                Optional<ServerPlayerEntity> player = Player.get(this.owner);
-                if (player.isPresent()) {
-                    this.player = player.get();
-                } else vanish();
+                return;
             }
-            if (getAttackTarget() == null || !getAttackTarget().isAlive()) {
-                List<MobEntity> entities = this.world.getEntitiesWithinAABB(MobEntity.class, new AxisAlignedBB(getPosition()).grow(24));
-                boolean flag = false;
-                for (MobEntity entity : entities) {
-                    if (entity.getAttackTarget() != null) {
-                        if (this.owner.equals(entity.getAttackTarget().getUniqueID())) {
-                            setAttackTarget(entity);
-                            flag = true;
-                            break;
-                        }
+            if (level() instanceof ServerLevel serverLevel) {
+                this.player = serverLevel.getPlayerByUUID(this.owner);
+            }
+            if (this.player == null) {
+                vanish();
+                return;
+            }
+            if (getTarget() == null || !getTarget().isAlive()) {
+                List<Mob> entities = level().getEntitiesOfClass(Mob.class, getBoundingBox().inflate(24.0D));
+                boolean found = false;
+                for (Mob entity : entities) {
+                    if (entity.getTarget() != null && this.owner.equals(entity.getTarget().getUUID())) {
+                        setTarget(entity);
+                        found = true;
+                        break;
                     }
                 }
-                if (!flag) vanish();
+                if (!found) {
+                    vanish();
+                }
             }
         }
     }
 
     protected void vanish() {
-        remove();
-        spawnExplosionParticle();
+        discard();
     }
 
     @Override
-    public void readAdditional(CompoundNBT compound) {
-        super.readAdditional(compound);
-        if (compound.contains("owner")) {
-            this.owner = compound.getUniqueId("owner");
+    public void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        if (compound.hasUUID("owner")) {
+            this.owner = compound.getUUID("owner");
         }
     }
 
     @Override
-    public void writeAdditional(CompoundNBT compound) {
-        super.writeAdditional(compound);
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
         if (this.owner != null) {
-            compound.putUniqueId("owner", this.owner);
+            compound.putUUID("owner", this.owner);
         }
     }
 
@@ -80,7 +79,7 @@ public class DarkEntity extends CreatureEntity {
         return this.owner;
     }
 
-    public void setOwner(PlayerEntity owner) {
-        this.owner = owner.getUniqueID();
+    public void setOwner(Player owner) {
+        this.owner = owner.getUUID();
     }
 }

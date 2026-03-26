@@ -1,6 +1,6 @@
 package owmii.losttrinkets.api;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import owmii.losttrinkets.api.player.PlayerData;
 import owmii.losttrinkets.api.trinket.Trinkets;
 
@@ -22,11 +22,11 @@ public class LostTrinketsAPI {
         return Objects.requireNonNull(instance);
     }
 
-    public static Trinkets getTrinkets(PlayerEntity player) {
+    public static Trinkets getTrinkets(Player player) {
         return get().getTrinkets(player);
     }
 
-    public static PlayerData getData(PlayerEntity player) {
+    public static PlayerData getData(Player player) {
         return get().getData(player);
     }
 }

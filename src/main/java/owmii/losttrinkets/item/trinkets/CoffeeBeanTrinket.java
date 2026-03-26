@@ -1,7 +1,7 @@
 package owmii.losttrinkets.item.trinkets;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.Effects;
 import net.minecraftforge.event.entity.living.PotionEvent;

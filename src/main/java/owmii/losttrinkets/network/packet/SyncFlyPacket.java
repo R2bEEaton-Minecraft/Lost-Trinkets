@@ -1,7 +1,7 @@
 package owmii.losttrinkets.network.packet;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 import owmii.lib.client.util.MC;
 import owmii.lib.network.IPacket;
 import owmii.losttrinkets.api.LostTrinketsAPI;
@@ -21,12 +21,12 @@ public class SyncFlyPacket implements IPacket<SyncFlyPacket> {
     }
 
     @Override
-    public void encode(SyncFlyPacket msg, PacketBuffer buffer) {
+    public void encode(SyncFlyPacket msg, FriendlyByteBuf buffer) {
         buffer.writeBoolean(msg.fly);
     }
 
     @Override
-    public SyncFlyPacket decode(PacketBuffer buffer) {
+    public SyncFlyPacket decode(FriendlyByteBuf buffer) {
         return new SyncFlyPacket(buffer.readBoolean());
     }
 
@@ -36,10 +36,11 @@ public class SyncFlyPacket implements IPacket<SyncFlyPacket> {
             MC.player().ifPresent(player -> {
                 PlayerData data = LostTrinketsAPI.getData(player);
                 data.allowFlying = msg.fly;
-                player.abilities.allowFlying = msg.fly;
+                player.getAbilities().mayfly = msg.fly;
                 if (!msg.fly) {
-                    player.abilities.isFlying = false;
+                    player.getAbilities().flying = false;
                 }
+                player.onUpdateAbilities();
             });
         });
         ctx.get().setPacketHandled(true);

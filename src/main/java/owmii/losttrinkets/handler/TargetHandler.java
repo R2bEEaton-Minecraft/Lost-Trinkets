@@ -1,11 +1,11 @@
 package owmii.losttrinkets.handler;
 
-import net.minecraft.entity.IAngerable;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.brain.Brain;
-import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.IAngerable;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobEntity;
+import net.minecraft.world.entity.ai.brain.Brain;
+import net.minecraft.world.entity.ai.brain.memory.MemoryModuleType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

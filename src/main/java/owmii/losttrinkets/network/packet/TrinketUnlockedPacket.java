@@ -1,10 +1,10 @@
 package owmii.losttrinkets.network.packet;
 
-import net.minecraft.item.Item;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.item.Item;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkEvent;
 import owmii.lib.client.util.MC;
 import owmii.lib.network.IPacket;
 import owmii.losttrinkets.api.trinket.ITrinket;
@@ -26,12 +26,12 @@ public class TrinketUnlockedPacket implements IPacket<TrinketUnlockedPacket> {
     }
 
     @Override
-    public void encode(TrinketUnlockedPacket msg, PacketBuffer buffer) {
+    public void encode(TrinketUnlockedPacket msg, FriendlyByteBuf buffer) {
         buffer.writeString(msg.key);
     }
 
     @Override
-    public TrinketUnlockedPacket decode(PacketBuffer buffer) {
+    public TrinketUnlockedPacket decode(FriendlyByteBuf buffer) {
         return new TrinketUnlockedPacket(buffer.readString(32767));
     }
 
@@ -39,7 +39,7 @@ public class TrinketUnlockedPacket implements IPacket<TrinketUnlockedPacket> {
     public void handle(TrinketUnlockedPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             MC.player().ifPresent(player -> {
-                Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(msg.key));
+                Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(msg.key));
                 if (item instanceof ITrinket) {
                     HudHandler.add(new Toast((ITrinket) item));
                     player.playSound(Sounds.UNLOCK, 1.0F, 1.0F);

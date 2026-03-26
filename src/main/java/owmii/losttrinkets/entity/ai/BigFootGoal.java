@@ -1,12 +1,12 @@
 package owmii.losttrinkets.entity.ai;
 
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.ai.RandomPositionGenerator;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.CreatureEntity;
+import net.minecraft.world.entity.ai.RandomPositionGenerator;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigator;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.item.Itms;
 

@@ -2,6 +2,7 @@ package owmii.losttrinkets.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import owmii.lib.config.Config;
 import owmii.losttrinkets.LostTrinkets;
@@ -19,8 +20,8 @@ public class Configs {
         lostTrinkets.addModListener(Configs::refresh);
     }
 
-    public static void refresh(ModConfig.ModConfigEvent event) {
-        String type = event instanceof ModConfig.Loading ? "Loading" : "Reloading";
+    public static void refresh(ModConfigEvent event) {
+        String type = event instanceof ModConfigEvent.Loading ? "Loading" : "Reloading";
         ModConfig modConfig = event.getConfig();
         LOGGER.info(MARKER, type + " " + modConfig.getFileName());
         ForgeConfigSpec spec = modConfig.getSpec();

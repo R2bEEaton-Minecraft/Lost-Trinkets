@@ -1,7 +1,7 @@
 package owmii.losttrinkets.item.trinkets;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.CreeperEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.CreeperEntity;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.trinket.Rarity;

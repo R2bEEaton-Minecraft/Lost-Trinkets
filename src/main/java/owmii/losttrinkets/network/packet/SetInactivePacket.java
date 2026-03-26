@@ -1,8 +1,8 @@
 package owmii.losttrinkets.network.packet;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.network.NetworkEvent;
 import owmii.lib.network.IPacket;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.trinket.ITrinket;
@@ -23,19 +23,19 @@ public class SetInactivePacket implements IPacket<SetInactivePacket> {
     }
 
     @Override
-    public void encode(SetInactivePacket msg, PacketBuffer buffer) {
+    public void encode(SetInactivePacket msg, FriendlyByteBuf buffer) {
         buffer.writeInt(msg.trinket);
     }
 
     @Override
-    public SetInactivePacket decode(PacketBuffer buffer) {
+    public SetInactivePacket decode(FriendlyByteBuf buffer) {
         return new SetInactivePacket(buffer.readInt());
     }
 
     @Override
     public void handle(SetInactivePacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            PlayerEntity player = ctx.get().getSender();
+            Player player = ctx.get().getSender();
             if (player != null) {
                 Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
                 List<ITrinket> items = trinkets.getActiveTrinkets();

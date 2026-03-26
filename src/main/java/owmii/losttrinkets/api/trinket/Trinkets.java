@@ -1,11 +1,11 @@
 package owmii.losttrinkets.api.trinket;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.registries.ForgeRegistries;
 import owmii.losttrinkets.api.LostTrinketsAPI;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class Trinkets implements INBTSerializable<CompoundNBT> {
+public class Trinkets implements INBTSerializable<CompoundTag> {
     private final List<ITrinket> available = new ArrayList<>();
     private final List<ITrinket> active = new ArrayList<>();
     private final List<ITickableTrinket> tickable = new ArrayList<>();
@@ -31,23 +31,23 @@ public class Trinkets implements INBTSerializable<CompoundNBT> {
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = new CompoundTag();
         nbt.putInt("slots", this.slots);
         nbt.putBoolean("slots_set", this.slotsSet);
-        ListNBT availableTrinkets = new ListNBT();
+        ListTag availableTrinkets = new ListTag();
         this.available.forEach((trinket) -> {
-            CompoundNBT nbt1 = new CompoundNBT();
-            ResourceLocation location = trinket.getItem().getRegistryName();
+            CompoundTag nbt1 = new CompoundTag();
+            ResourceLocation location = ForgeRegistries.ITEMS.getKey(trinket.asItem());
             Objects.requireNonNull(location);
             nbt1.putString("trinket", location.toString());
             availableTrinkets.add(nbt1);
         });
         nbt.put("available_trinkets", availableTrinkets);
-        ListNBT activeTrinkets = new ListNBT();
+        ListTag activeTrinkets = new ListTag();
         this.active.forEach((trinket) -> {
-            CompoundNBT nbt1 = new CompoundNBT();
-            ResourceLocation location = trinket.getItem().getRegistryName();
+            CompoundTag nbt1 = new CompoundTag();
+            ResourceLocation location = ForgeRegistries.ITEMS.getKey(trinket.asItem());
             Objects.requireNonNull(location);
             nbt1.putString("trinket", location.toString());
             activeTrinkets.add(nbt1);
@@ -57,24 +57,24 @@ public class Trinkets implements INBTSerializable<CompoundNBT> {
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         this.slots = nbt.getInt("slots");
         this.slotsSet = nbt.getBoolean("slots_set");
-        ListNBT availableTrinkets = nbt.getList("available_trinkets", Constants.NBT.TAG_COMPOUND);
+        ListTag availableTrinkets = nbt.getList("available_trinkets", Tag.TAG_COMPOUND);
         this.available.clear();
         for (int i = 0; i < availableTrinkets.size(); i++) {
-            CompoundNBT nbt1 = availableTrinkets.getCompound(i);
+            CompoundTag nbt1 = availableTrinkets.getCompound(i);
             Item trinket = ForgeRegistries.ITEMS.getValue(new ResourceLocation(nbt1.getString("trinket")));
             if (trinket instanceof ITrinket) {
                 this.available.add((ITrinket) trinket);
             }
         }
-        ListNBT activeTrinkets = nbt.getList("active_trinkets", Constants.NBT.TAG_COMPOUND);
+        ListTag activeTrinkets = nbt.getList("active_trinkets", Tag.TAG_COMPOUND);
         this.active.clear();
         this.tickable.clear();
         this.targeting.clear();
         for (int i = 0; i < activeTrinkets.size(); i++) {
-            CompoundNBT nbt1 = activeTrinkets.getCompound(i);
+            CompoundTag nbt1 = activeTrinkets.getCompound(i);
             Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(nbt1.getString("trinket")));
             if (item instanceof ITrinket) {
                 ITrinket trinket = (ITrinket) item;
@@ -135,7 +135,7 @@ public class Trinkets implements INBTSerializable<CompoundNBT> {
         return false;
     }
 
-    public boolean setActive(ITrinket trinket, PlayerEntity player) {
+    public boolean setActive(ITrinket trinket, Player player) {
         if (isAvailable(trinket)) {
             forceActive(trinket, player);
             this.available.remove(trinket);
@@ -144,7 +144,7 @@ public class Trinkets implements INBTSerializable<CompoundNBT> {
         return false;
     }
 
-    public boolean setInactive(ITrinket trinket, PlayerEntity player) {
+    public boolean setInactive(ITrinket trinket, Player player) {
         if (isActive(trinket)) {
             this.available.add(trinket);
             this.active.remove(trinket);
@@ -157,14 +157,14 @@ public class Trinkets implements INBTSerializable<CompoundNBT> {
             if (trinket instanceof Trinket) {
                 ((Trinket) trinket).removeAttributes(player);
             }
-            trinket.onDeactivated(player.world, player.getPosition(), player);
+            trinket.onDeactivated(player.level(), player.blockPosition(), player);
             this.data.setSync(true);
             return true;
         }
         return false;
     }
 
-    public boolean forceActive(ITrinket trinket, PlayerEntity player) {
+    public boolean forceActive(ITrinket trinket, Player player) {
         if (!isActive(trinket) && this.active.size() < this.slots) {
             this.active.add(trinket);
             if (trinket instanceof ITickableTrinket) {
@@ -176,14 +176,14 @@ public class Trinkets implements INBTSerializable<CompoundNBT> {
             if (trinket instanceof Trinket) {
                 ((Trinket) trinket).applyAttributes(player);
             }
-            trinket.onActivated(player.world, player.getPosition(), player);
+            trinket.onActivated(player.level(), player.blockPosition(), player);
             this.data.setSync(true);
             return true;
         }
         return false;
     }
 
-    public void removeDisabled(PlayerEntity player) {
+    public void removeDisabled(Player player) {
         getActiveTrinkets().stream().filter(LostTrinketsAPI.get()::isDisabled).collect(Collectors.toList())
                 .forEach(trinket -> setInactive(trinket, player));
         if (getAvailableTrinkets().removeIf(LostTrinketsAPI.get()::isDisabled)) {

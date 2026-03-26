@@ -1,28 +1,35 @@
 modLoader="javafml" 
-loaderVersion="[36,)"
+loaderVersion="${loader_version_range}"
 issueTrackerURL="https://github.com/owmii/lost-trinkets/issues"
-license="LGPLv3"
+license="${mod_license}"
 
 [[mods]]
-modId="losttrinkets"
-version="${file.jarVersion}"
-displayName="Lost Trinkets"
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/lost-trinkets"
-authors="owmii"
+authors="${mod_authors}"
 description='''
-70+ Unlockable trinkets with different useful abilities.
+${mod_description}
 '''
 
-[[dependencies.losttrinkets]]
+[[dependencies.${mod_id}]]
     modId="lollipop"
     mandatory=true
-    versionRange="[3.2.9,)"
+    versionRange="${lollipop_version_range}"
     ordering="NONE"
     side="BOTH"
 
-[[dependencies.losttrinkets]]
+[[dependencies.${mod_id}]]
     modId="forge"
     mandatory=true
-    versionRange="[36.0.0,)"
+    versionRange="${forge_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"

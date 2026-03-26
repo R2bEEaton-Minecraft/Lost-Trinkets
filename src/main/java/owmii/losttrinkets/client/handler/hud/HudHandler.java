@@ -1,14 +1,14 @@
 package owmii.losttrinkets.client.handler.hud;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -18,7 +18,6 @@ import owmii.lib.util.Ticker;
 import owmii.losttrinkets.client.screen.Textures;
 
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -36,17 +35,17 @@ public class HudHandler {
     public static void tick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             Minecraft mc = Minecraft.getInstance();
-            if (mc.world == null && !TOASTS.isEmpty()) {
+            if (mc.level == null && !TOASTS.isEmpty()) {
                 TOASTS.clear();
                 toast = null;
             }
             Iterator<Toast> itr = TOASTS.iterator();
             while (itr.hasNext()) {
-                Toast b = itr.next();
-                if (!b.getTicker().ended()) {
-                    toast = b;
+                Toast candidate = itr.next();
+                if (!candidate.getTicker().ended()) {
+                    toast = candidate;
                     if (ticker.ended()) {
-                        b.getTicker().onward();
+                        candidate.getTicker().onward();
                     }
                     ticker.add(5);
                 } else {
@@ -56,8 +55,9 @@ public class HudHandler {
                         itr.remove();
                     }
                 }
-                if (toast != null)
+                if (toast != null) {
                     break;
+                }
             }
             if (TOASTS.isEmpty()) {
                 toast = null;
@@ -66,37 +66,50 @@ public class HudHandler {
     }
 
     @SubscribeEvent
-    public static void renderHud(RenderGameOverlayEvent.Post event) {
+    public static void renderHud(RenderGuiOverlayEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
-        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL && mc.currentScreen == null) {
-            render(event.getMatrixStack(), mc, event.getWindow().getScaledWidth(), event.getWindow().getScaledHeight());
+        if (mc.screen == null) {
+            render(event.getGuiGraphics(), mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
         }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void gui(GuiScreenEvent.DrawScreenEvent.Post event) {
+    public static void gui(ScreenEvent.Render.Post event) {
         Minecraft mc = Minecraft.getInstance();
-        render(event.getMatrixStack(), mc, event.getGui().width, event.getGui().height);
+        Screen screen = event.getScreen();
+        render(event.getGuiGraphics(), mc, screen.width, screen.height);
     }
 
-    static void render(MatrixStack matrix, Minecraft mc, int width, int height) {
+    static void render(GuiGraphics guiGraphics, Minecraft mc, int width, int height) {
         if (toast != null) {
-            RenderSystem.pushMatrix();
-            RenderSystem.translated(width / 2.0F - Textures.TOAST.getWidth() / 2.0F, 4 - 60.0F + ticker.getTicks(), 0.0F);
-            Textures.TOAST.draw(matrix, 0, 0);
-            RenderSystem.pushMatrix();
-            RenderSystem.translated(41.0F, 5.0F, 0.0F);
-            mc.fontRenderer.drawString(matrix, I18n.format("gui.losttrinkets.trinket.unlocked"), 0, 5, new Color(0xFFBA6F).getRGB());
-            String s = I18n.format(toast.getTrinket().getItem().getTranslationKey());
-            s = StringUtils.abbreviate(s, 20);
-            mc.fontRenderer.drawString(matrix, s, 0, 18, 0xF0C6E5);
-            RenderSystem.popMatrix();
-            RenderSystem.pushMatrix();
-            RenderSystem.translated(5.0F, 5.0F, 0.0F);
-            RenderSystem.scaled(2.0F, 2.0F, 2.0F);
-            mc.getItemRenderer().renderItemAndEffectIntoGUI(new ItemStack(toast.getTrinket()), 0, 0);
-            RenderSystem.popMatrix();
-            RenderSystem.popMatrix();
+            int x = width / 2 - Textures.TOAST.getWidth() / 2;
+            int y = (int) (4 - 60.0F + ticker.getTicks());
+            Textures.TOAST.draw(guiGraphics, x, y);
+
+            guiGraphics.drawString(
+                    mc.font,
+                    Component.translatable("gui.losttrinkets.trinket.unlocked"),
+                    x + 41,
+                    y + 10,
+                    0xFFBA6F,
+                    false
+            );
+
+            String translated = Component.translatable(toast.getTrinket().getItem().getDescriptionId()).getString();
+            guiGraphics.drawString(
+                    mc.font,
+                    StringUtils.abbreviate(translated, 20),
+                    x + 41,
+                    y + 23,
+                    0xF0C6E5,
+                    false
+            );
+
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(x + 5.0F, y + 5.0F, 0.0F);
+            guiGraphics.pose().scale(2.0F, 2.0F, 2.0F);
+            guiGraphics.renderItem(new ItemStack(toast.getTrinket()), 0, 0);
+            guiGraphics.pose().popPose();
         }
     }
 

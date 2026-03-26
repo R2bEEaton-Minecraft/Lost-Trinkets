@@ -1,6 +1,6 @@
 package owmii.losttrinkets.client.screen;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import owmii.lib.client.screen.Texture;
 import owmii.losttrinkets.LostTrinkets;
 

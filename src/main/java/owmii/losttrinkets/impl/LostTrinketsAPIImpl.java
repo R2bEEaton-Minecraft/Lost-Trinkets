@@ -1,7 +1,7 @@
 package owmii.losttrinkets.impl;
 
 import com.google.common.collect.Lists;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import owmii.losttrinkets.api.ILostTrinketsAPI;
 import owmii.losttrinkets.api.player.PlayerData;
 import owmii.losttrinkets.api.trinket.ITrinket;
@@ -20,33 +20,33 @@ public class LostTrinketsAPIImpl implements ILostTrinketsAPI {
     public static final List<UUID> WEIGHTED_UNLOCK_QUEUE = new ArrayList<>();
 
     @Override
-    public boolean unlock(PlayerEntity player, ITrinket trinket) {
-        if (!player.world.isRemote && isEnabled(trinket) && !getTrinkets(player).has(trinket)) {
-            List<ITrinket> trinketList = UNLOCK_QUEUE.get(player.getUniqueID());
+    public boolean unlock(Player player, ITrinket trinket) {
+        if (!player.level().isClientSide && isEnabled(trinket) && !getTrinkets(player).has(trinket)) {
+            List<ITrinket> trinketList = UNLOCK_QUEUE.get(player.getUUID());
             if (trinketList != null) {
                 trinketList.add(trinket);
             } else trinketList = Lists.newArrayList(trinket);
-            UNLOCK_QUEUE.put(player.getUniqueID(), trinketList);
+            UNLOCK_QUEUE.put(player.getUUID(), trinketList);
             return true;
         }
         return false;
     }
 
     @Override
-    public void unlock(PlayerEntity player) {
-        if (!player.world.isRemote) {
-            WEIGHTED_UNLOCK_QUEUE.add(player.getUniqueID());
+    public void unlock(Player player) {
+        if (!player.level().isClientSide) {
+            WEIGHTED_UNLOCK_QUEUE.add(player.getUUID());
         }
     }
 
     @Override
-    public Trinkets getTrinkets(PlayerEntity player) {
+    public Trinkets getTrinkets(Player player) {
         return getData(player).getTrinkets();
     }
 
     @Override
-    public PlayerData getData(PlayerEntity player) {
-        return player.getCapability(PlayerData.CAP).orElse(new PlayerData());
+    public PlayerData getData(Player player) {
+        return player.getCapability(PlayerData.CAP).orElseGet(PlayerData::new);
     }
 
     @Override

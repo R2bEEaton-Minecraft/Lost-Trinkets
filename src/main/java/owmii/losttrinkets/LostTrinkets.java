@@ -2,6 +2,7 @@ package owmii.losttrinkets;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import owmii.lib.api.IClient;
@@ -15,6 +16,7 @@ import owmii.losttrinkets.config.Configs;
 import owmii.losttrinkets.entity.Entities;
 import owmii.losttrinkets.handler.DataManager;
 import owmii.losttrinkets.impl.LostTrinketsAPIImpl;
+import owmii.losttrinkets.item.ItemGroups;
 import owmii.losttrinkets.item.Itms;
 import owmii.losttrinkets.network.Packets;
 
@@ -27,6 +29,7 @@ public class LostTrinkets implements IMod {
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
     public LostTrinkets() {
+        ItemGroups.init(FMLJavaModLoadingContext.get().getModEventBus());
         Blcks.REG.init();
         Itms.REG.init();
         Entities.REG.init();
@@ -35,14 +38,14 @@ public class LostTrinkets implements IMod {
         LostTrinketsAPI.init(new LostTrinketsAPIImpl());
 
         loadListeners();
+        addModListener(DataManager::register);
+        addModListener(Entities::register);
         Configs.register(this);
     }
 
     @Override
     public void setup(FMLCommonSetupEvent event) {
-        DataManager.register();
         Packets.register();
-        Entities.register();
     }
 
     @Nullable

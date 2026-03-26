@@ -1,9 +1,9 @@
 package owmii.losttrinkets.api.trinket;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 public interface ITickableTrinket extends ITrinket {
-    void tick(World world, BlockPos pos, PlayerEntity player);
+    void tick(Level world, BlockPos pos, Player player);
 }
