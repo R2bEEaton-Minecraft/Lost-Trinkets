@@ -6,7 +6,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.EnchantmentMenu;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -62,6 +65,8 @@ import owmii.losttrinkets.item.trinkets.WitherNailTrinket;
 
 @Mod.EventBusSubscriber
 public class EventHandler {
+    private static final int[] BOOK_O_ENCHANTING_LEVELS = {10, 20, 30};
+
     @SubscribeEvent
     public static void tick(TickEvent.PlayerTickEvent event) {
         Player player = event.player;
@@ -203,5 +208,32 @@ public class EventHandler {
         }
         UnlockHandler.checkBlockHarvest(event.getPlayer(), event.getPlayer().level(), event.getPos(), event.getState());
         OctopickTrinket.onBreak(event);
+    }
+
+    @SubscribeEvent
+    public static void onEnchantmentLevelSet(EnchantmentLevelSetEvent event) {
+        if (!hasActiveBookOEnchantingUser(event.getLevel(), event.getPos())) {
+            return;
+        }
+
+        int row = event.getEnchantRow();
+        if (row >= 0 && row < BOOK_O_ENCHANTING_LEVELS.length) {
+            event.setEnchantLevel(BOOK_O_ENCHANTING_LEVELS[row]);
+        }
+    }
+
+    private static boolean hasActiveBookOEnchantingUser(Level level, BlockPos pos) {
+        for (Player player : level.players()) {
+            if (!(player.containerMenu instanceof EnchantmentMenu)) {
+                continue;
+            }
+            if (player.blockPosition().distManhattan(pos) > 8) {
+                continue;
+            }
+            if (LostTrinketsAPI.getTrinkets(player).isActive(Itms.BOOK_O_ENCHANTING)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
