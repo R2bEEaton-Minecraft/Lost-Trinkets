@@ -39,6 +39,7 @@ import owmii.losttrinkets.item.trinkets.FireMindTrinket;
 import owmii.losttrinkets.item.trinkets.GoldenMelonTrinket;
 import owmii.losttrinkets.item.trinkets.GoldenSkullTrinket;
 import owmii.losttrinkets.item.trinkets.GoldenSwatterTrinket;
+import owmii.losttrinkets.item.trinkets.IceShardTrinket;
 import owmii.losttrinkets.item.trinkets.LunchBagTrinket;
 import owmii.losttrinkets.item.trinkets.MadAuraTrinket;
 import owmii.losttrinkets.item.trinkets.MadPiggyTrinket;
@@ -66,6 +67,7 @@ public class EventHandler {
             if (data.unlockDelay > 0) {
                 data.unlockDelay--;
             }
+            IceShardTrinket.frostWalk(player, player.blockPosition());
             Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
             BlockPos pos = player.blockPosition();
             trinkets.getTickable().forEach(trinket -> trinket.tick(player.level(), pos, player));
@@ -190,6 +192,7 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onBreak(BlockEvent.BreakEvent event) {
+        UnlockHandler.checkBlockHarvest(event.getPlayer(), event.getPlayer().level(), event.getPos(), event.getState());
         OctopickTrinket.onBreak(event);
     }
 }

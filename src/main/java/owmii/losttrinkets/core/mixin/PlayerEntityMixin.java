@@ -1,32 +1,19 @@
 package owmii.losttrinkets.core.mixin;
 
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ForgeHooks;
 import org.spongepowered.asm.mixin.Mixin;
-import owmii.losttrinkets.item.trinkets.IceShardTrinket;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import owmii.losttrinkets.item.trinkets.ThaSpiderTrinket;
 
-@Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity {
-    protected PlayerEntityMixin(EntityType<? extends LivingEntity> type, World world) {
-        super(type, world);
-    }
-
-    @Override
-    protected void frostWalk(BlockPos pos) {
-        IceShardTrinket.frostWalk(this, pos);
-        super.frostWalk(pos);
-    }
-
-    @Override
-    public boolean isOnLadder() {
-        if (!super.isOnLadder()) {
-            return ThaSpiderTrinket.doClimb(this);
+@Mixin(LivingEntity.class)
+public abstract class PlayerEntityMixin {
+    @Inject(method = "onClimbable", at = @At("TAIL"), cancellable = true)
+    private void onClimbable(CallbackInfoReturnable<Boolean> cir) {
+        if (!cir.getReturnValueZ() && (Object) this instanceof Player player && ThaSpiderTrinket.doClimb(player)) {
+            cir.setReturnValue(true);
         }
-        return ForgeHooks.isLivingOnLadder(getBlockState(), this.world, getPosition(), this);
     }
 }

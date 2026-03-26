@@ -1,7 +1,7 @@
 package owmii.losttrinkets.core.mixin;
 
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.WebBlock;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -24,18 +24,18 @@ public class WebBlockMixin extends Block implements IForgeShearable {
     }
 
     @Override
-    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
         boolean flag = false;
-        if (entity instanceof PlayerEntity) {
-            Trinkets trinkets = LostTrinketsAPI.getTrinkets((PlayerEntity) entity);
+        if (entity instanceof Player player) {
+            Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
             if (trinkets.isActive(Itms.GLASS_SHARD)) {
                 world.destroyBlock(pos, false);
-                Stack.drop(entity, new ItemStack(Items.STRING, 1 + world.rand.nextInt(2)));
+                Stack.drop(entity, new ItemStack(Items.STRING, 1 + world.random.nextInt(2)));
                 flag = true;
             }
         }
         if (!flag) {
-            entity.setMotionMultiplier(state, new Vector3d(0.25D, (double) 0.05F, 0.25D));
+            entity.makeStuckInBlock(state, new Vec3(0.25D, 0.05D, 0.25D));
         }
     }
 }

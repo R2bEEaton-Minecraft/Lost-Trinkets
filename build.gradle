@@ -55,7 +55,6 @@ sourceSets {
         java {
             srcDirs = ['src/main/java']
             exclude 'owmii/losttrinkets/client/compat/jei/**'
-            exclude 'owmii/losttrinkets/core/mixin/**'
         }
     }
 }

@@ -1,6 +1,6 @@
 package owmii.losttrinkets.core.mixin;
 
-import net.minecraft.world.entity.monster.EndermanEntity;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.CapabilityProvider;
@@ -17,8 +17,9 @@ public abstract class ItemStackMixin extends CapabilityProvider<ItemStack> imple
     }
 
     @Override
-    public boolean isEnderMask(PlayerEntity player, EndermanEntity endermanEntity) {
-        boolean enderMask = getStack().getItem().isEnderMask(getStack(), player, endermanEntity);
+    public boolean isEnderMask(Player player, EnderMan enderman) {
+        ItemStack stack = (ItemStack) (Object) this;
+        boolean enderMask = stack.getItem().isEnderMask(stack, player, enderman);
         if (!enderMask) {
             Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
             return trinkets.isActive(Itms.BLANK_EYES);
