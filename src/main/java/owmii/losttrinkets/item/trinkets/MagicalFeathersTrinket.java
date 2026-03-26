@@ -39,8 +39,10 @@ public class MagicalFeathersTrinket extends Trinket<MagicalFeathersTrinket> impl
         super.onDeactivated(world, pos, player);
         PlayerData data = LostTrinketsAPI.getData(player);
         if (data.allowFlying) {
-            player.getAbilities().mayfly = false;
-            player.getAbilities().flying = false;
+            if (!player.getAbilities().instabuild) {
+                player.getAbilities().mayfly = false;
+                player.getAbilities().flying = false;
+            }
             player.onUpdateAbilities();
             if (!world.isClientSide && player instanceof ServerPlayer serverPlayer) {
                 LostTrinkets.NET.toClient(new SyncFlyPacket(false), serverPlayer);

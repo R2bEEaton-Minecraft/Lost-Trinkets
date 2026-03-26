@@ -36,8 +36,8 @@ public class SyncFlyPacket implements IPacket<SyncFlyPacket> {
             MC.player().ifPresent(player -> {
                 PlayerData data = LostTrinketsAPI.getData(player);
                 data.allowFlying = msg.fly;
-                player.getAbilities().mayfly = msg.fly;
-                if (!msg.fly) {
+                player.getAbilities().mayfly = msg.fly || player.getAbilities().instabuild;
+                if (!msg.fly && !player.getAbilities().instabuild) {
                     player.getAbilities().flying = false;
                 }
                 player.onUpdateAbilities();
