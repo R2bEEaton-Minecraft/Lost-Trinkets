@@ -17,7 +17,6 @@ import net.minecraftforge.fml.common.Mod;
 import owmii.lib.util.Magnet;
 import owmii.losttrinkets.LostTrinkets;
 import owmii.losttrinkets.api.LostTrinketsAPI;
-import owmii.losttrinkets.api.trinket.ITickableTrinket;
 import owmii.losttrinkets.api.trinket.Rarity;
 import owmii.losttrinkets.api.trinket.Trinket;
 import owmii.losttrinkets.api.trinket.Trinkets;
@@ -28,7 +27,7 @@ import owmii.losttrinkets.network.packet.MagnetoPacket;
 import java.util.List;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
-public class MagnetoTrinket extends Trinket<MagnetoTrinket> implements ITickableTrinket {
+public class MagnetoTrinket extends Trinket<MagnetoTrinket> {
     public MagnetoTrinket(Rarity rarity, Properties properties) {
         super(rarity, properties);
     }
@@ -55,13 +54,6 @@ public class MagnetoTrinket extends Trinket<MagnetoTrinket> implements ITickable
                     orb.moveTo(player.getX(), player.getY(), player.getZ());
                     orb.playerTouch(player);
                 });
-    }
-
-    @Override
-    public void tick(net.minecraft.world.level.Level world, net.minecraft.core.BlockPos pos, Player player) {
-        if (!world.isClientSide && player.tickCount % 10 == 0) {
-            collectNearby(player);
-        }
     }
 
     @SubscribeEvent

@@ -7,16 +7,17 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
-import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.level.block.EnchantmentTableBlock;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.trinket.Trinkets;
 import owmii.losttrinkets.item.Itms;
@@ -50,41 +51,56 @@ public abstract class EnchantmentContainerMixin {
     @Shadow
     private Container enchantSlots;
 
+    @Shadow
+    private ContainerLevelAccess access;
+
     @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V", at = @At("RETURN"))
     private void enchantmentContainer(int id, Inventory inventory, ContainerLevelAccess access, CallbackInfo ci) {
         this.player = inventory.player;
     }
 
-    @Inject(method = "slotsChanged", at = @At("TAIL"))
+    @Inject(method = "slotsChanged", at = @At("HEAD"), cancellable = true)
     private void slotsChanged(Container container, CallbackInfo ci) {
-        if (this.player != null && container == this.enchantSlots) {
-            Trinkets trinkets = LostTrinketsAPI.getTrinkets(this.player);
-            if (trinkets.isActive(Itms.BOOK_O_ENCHANTING)) {
-                ItemStack stack = container.getItem(0);
-                if (!stack.isEmpty()) {
-                    this.random.setSeed(this.enchantmentSeed.get());
-                    for (int i = 0; i < 3; i++) {
-                        this.costs[i] = EnchantmentHelper.getEnchantmentCost(this.random, i, 15, stack);
-                        this.enchantClue[i] = -1;
-                        this.levelClue[i] = -1;
-                        if (this.costs[i] < i + 1) {
-                            this.costs[i] = 0;
-                        }
-                        this.costs[i] = ForgeEventFactory.onEnchantmentLevelSet(this.player.level(), this.player.blockPosition(), i, 15, stack, this.costs[i]);
+        if (this.player == null || container != this.enchantSlots) {
+            return;
+        }
+        Trinkets trinkets = LostTrinketsAPI.getTrinkets(this.player);
+        if (!trinkets.isActive(Itms.BOOK_O_ENCHANTING)) {
+            return;
+        }
+        ItemStack stack = container.getItem(0);
+        if (!stack.isEmpty() && stack.isEnchantable()) {
+            this.access.execute((level, pos) -> {
+                this.random.setSeed((long) this.enchantmentSeed.get());
+                for (int i = 0; i < 3; ++i) {
+                    this.costs[i] = EnchantmentHelper.getEnchantmentCost(this.random, i, 15, stack);
+                    this.enchantClue[i] = -1;
+                    this.levelClue[i] = -1;
+                    if (this.costs[i] < i + 1) {
+                        this.costs[i] = 0;
                     }
-                    for (int i = 0; i < 3; i++) {
-                        if (this.costs[i] > 0) {
-                            List<EnchantmentInstance> list = this.getEnchantmentList(stack, i, this.costs[i]);
-                            if (!list.isEmpty()) {
-                                EnchantmentInstance enchantment = list.get(this.random.nextInt(list.size()));
-                                this.enchantClue[i] = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getId(enchantment.enchantment);
-                                this.levelClue[i] = enchantment.level;
-                            }
-                        }
-                    }
-                    ((AbstractContainerMenu) (Object) this).broadcastChanges();
                 }
+
+                for (int i = 0; i < 3; ++i) {
+                    if (this.costs[i] > 0) {
+                        List<EnchantmentInstance> list = this.getEnchantmentList(stack, i, this.costs[i]);
+                        if (!list.isEmpty()) {
+                            EnchantmentInstance enchantment = list.get(this.random.nextInt(list.size()));
+                            this.enchantClue[i] = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getId(enchantment.enchantment);
+                            this.levelClue[i] = enchantment.level;
+                        }
+                    }
+                }
+
+                ((AbstractContainerMenu) (Object) this).broadcastChanges();
+            });
+        } else {
+            for (int i = 0; i < 3; ++i) {
+                this.costs[i] = 0;
+                this.enchantClue[i] = -1;
+                this.levelClue[i] = -1;
             }
         }
+        ci.cancel();
     }
 }

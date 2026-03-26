@@ -35,7 +35,7 @@ public class Itms {
     public static final RegistryObject<Trinket> TREBLE_HOOKS = trinket("treble_hooks", () -> new TrebleHooksTrinket(Rarity.RARE, props()));
     public static final RegistryObject<Trinket> THA_WIZARD = trinket("tha_wizard", () -> new ThaWizardTrinket(Rarity.RARE, props()));
     public static final RegistryObject<Trinket> THA_BAT = trinket("tha_bat", () -> new ThaBatTrinket(Rarity.RARE, props()));
-    public static final RegistryObject<Trinket> BLANK_EYES = trinket("blank_eyes", () -> new Trinket(Rarity.RARE, props()));
+    public static final RegistryObject<Trinket> BLANK_EYES = trinket("blank_eyes", () -> new BlankEyesTrinket(Rarity.RARE, props()));
     public static final RegistryObject<Trinket> BIG_FOOT = trinket("big_foot", () -> new BigFootTrinket(Rarity.RARE, props()));
 
     public static final RegistryObject<Trinket> BOOK_O_ENCHANTING = trinket("book_o_enchanting", () -> new Trinket(Rarity.MASTER, props()));
@@ -51,7 +51,7 @@ public class Itms {
     public static final RegistryObject<Trinket> THA_GOLEM = trinket("tha_golem", () -> new Trinket(Rarity.MASTER, props()).add(Attributes.KNOCKBACK_RESISTANCE, "afb13d18-56f2-4e1f-8281-8cc7e3005eef", 1.0D));
     public static final RegistryObject<Trinket> DRAGON_BREATH = trinket("dragon_breath", () -> new DragonBreathTrinket(Rarity.MASTER, props()));
 
-    public static final RegistryObject<Trinket> KARMA = trinket("karma", () -> new Trinket(Rarity.ELITE, props()));
+    public static final RegistryObject<Trinket> KARMA = trinket("karma", () -> new KarmaTrinket(Rarity.ELITE, props()));
     public static final RegistryObject<Trinket> DARK_DAGGER = trinket("dark_dagger", () -> new DarkDaggerTrinket(Rarity.ELITE, props()));
     public static final RegistryObject<Trinket> STARFISH = trinket("starfish", () -> new StarfishTrinket(Rarity.ELITE, props()));
     public static final RegistryObject<Trinket> DROP_SPINDLE = trinket("drop_spindle", () -> new DropSpindleTrinket(Rarity.ELITE, props()));

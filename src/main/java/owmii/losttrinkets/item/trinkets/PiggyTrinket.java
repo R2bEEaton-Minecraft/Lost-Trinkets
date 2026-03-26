@@ -30,7 +30,7 @@ public class PiggyTrinket extends Trinket<PiggyTrinket> implements ITickableTrin
             return;
         }
 
-        double speed = pig.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.225D * 1.125D;
+        double speed = pig.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.55D;
         if (forwardInput < 0.0F) {
             speed *= 0.35D;
         }
