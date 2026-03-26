@@ -11,6 +11,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraftforge.event.ForgeEventFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -46,6 +47,9 @@ public abstract class EnchantmentContainerMixin {
     @Shadow
     public abstract List<EnchantmentInstance> getEnchantmentList(ItemStack stack, int slot, int power);
 
+    @Shadow
+    private Container enchantSlots;
+
     @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V", at = @At("RETURN"))
     private void enchantmentContainer(int id, Inventory inventory, ContainerLevelAccess access, CallbackInfo ci) {
         this.player = inventory.player;
@@ -53,7 +57,7 @@ public abstract class EnchantmentContainerMixin {
 
     @Inject(method = "slotsChanged", at = @At("TAIL"))
     private void slotsChanged(Container container, CallbackInfo ci) {
-        if (this.player != null) {
+        if (this.player != null && container == this.enchantSlots) {
             Trinkets trinkets = LostTrinketsAPI.getTrinkets(this.player);
             if (trinkets.isActive(Itms.BOOK_O_ENCHANTING)) {
                 ItemStack stack = container.getItem(0);
@@ -66,6 +70,7 @@ public abstract class EnchantmentContainerMixin {
                         if (this.costs[i] < i + 1) {
                             this.costs[i] = 0;
                         }
+                        this.costs[i] = ForgeEventFactory.onEnchantmentLevelSet(this.player.level(), this.player.blockPosition(), i, 15, stack, this.costs[i]);
                     }
                     for (int i = 0; i < 3; i++) {
                         if (this.costs[i] > 0) {

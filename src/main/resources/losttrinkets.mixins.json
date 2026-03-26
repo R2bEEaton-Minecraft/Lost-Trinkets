@@ -14,10 +14,10 @@
 	"MerchantResultSlotMixin",
 	"EnchantmentContainerMixin",
 	"EnderPearlItemMixin",
+	"EnderManMixin",
 	"PigEntityMixin"
   ],
   "client": [
-    "client.EnderManMixin",
     "client.EntityMixin"
   ],
   "server": [],

@@ -35,6 +35,7 @@ import owmii.losttrinkets.item.trinkets.DarkDaggerTrinket;
 import owmii.losttrinkets.item.trinkets.DarkEggTrinket;
 import owmii.losttrinkets.item.trinkets.DropSpindleTrinket;
 import owmii.losttrinkets.item.trinkets.EmberTrinket;
+import owmii.losttrinkets.item.trinkets.DragonBreathTrinket;
 import owmii.losttrinkets.item.trinkets.FireMindTrinket;
 import owmii.losttrinkets.item.trinkets.GlassShardTrinket;
 import owmii.losttrinkets.item.trinkets.GoldenMelonTrinket;
@@ -196,6 +197,10 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onBreak(BlockEvent.BreakEvent event) {
+        DragonBreathTrinket.onBreak(event);
+        if (event.isCanceled()) {
+            return;
+        }
         UnlockHandler.checkBlockHarvest(event.getPlayer(), event.getPlayer().level(), event.getPos(), event.getState());
         OctopickTrinket.onBreak(event);
     }
