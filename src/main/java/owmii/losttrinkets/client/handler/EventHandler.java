@@ -29,7 +29,5 @@ public class EventHandler {
             event.setCanceled(true);
         }
 
-        // The 1.16 translucent override used for Minds Eye needs a full 1.20 renderer rewrite.
-        // Leave vanilla rendering in place until the entity-render pass is completed.
     }
 }

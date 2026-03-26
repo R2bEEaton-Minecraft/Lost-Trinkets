@@ -16,7 +16,9 @@
 	"EnderPearlItemMixin",
 	"PigEntityMixin"
   ],
-  "client": [],
+  "client": [
+    "client.EntityMixin"
+  ],
   "server": [],
   "injectors": {
 	"defaultRequire": 1
