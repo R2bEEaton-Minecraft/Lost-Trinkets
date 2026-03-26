@@ -54,9 +54,9 @@ public class BigFootGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (this.entity.isNonBoss() && this.entity.isBaby()) {
+        if (this.entity.isBaby()) {
             this.player = this.entity.level().getNearestPlayer(this.entity.getX(), this.entity.getY(), this.entity.getZ(), 8.0D,
-                    target -> LostTrinketsAPI.getTrinkets(target).isActive(Itms.BIG_FOOT));
+                    target -> target instanceof Player player && LostTrinketsAPI.getTrinkets(player).isActive(Itms.BIG_FOOT));
             if (this.player != null) {
                 Vec3 pos = DefaultRandomPos.getPosAway(this.entity, 16, 7, this.player.position());
                 if (pos == null) {

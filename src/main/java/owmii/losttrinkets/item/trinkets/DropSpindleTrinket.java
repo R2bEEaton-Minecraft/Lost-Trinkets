@@ -15,15 +15,14 @@ public class DropSpindleTrinket extends Trinket<DropSpindleTrinket> {
     }
 
     public static void onHurt(LivingHurtEvent event) {
-        Entity entity = event.getSource().getImmediateSource();
-        if (entity instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) entity;
+        Entity entity = event.getSource().getDirectEntity();
+        if (entity instanceof Player player) {
             Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
             if (trinkets.isActive(Itms.DROP_SPINDLE)) {
-                player.inventory.armorInventory.forEach(stack -> {
-                    if (player.world.rand.nextInt(2) == 0) {
+                player.getArmorSlots().forEach(stack -> {
+                    if (player.level().random.nextInt(2) == 0) {
                         if (!stack.isEmpty() && stack.isDamaged()) {
-                            stack.setDamage(stack.getDamage() - 1);
+                            stack.setDamageValue(stack.getDamageValue() - 1);
                         }
                     }
                 });

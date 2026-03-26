@@ -15,9 +15,8 @@ public class StarfishTrinket extends Trinket<StarfishTrinket> {
     }
 
     public static void onHurt(LivingHurtEvent event) {
-        Entity entity = event.getSource().getImmediateSource();
-        if (entity instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) entity;
+        Entity entity = event.getSource().getDirectEntity();
+        if (entity instanceof Player player) {
             Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
             if (trinkets.isActive(Itms.STARFISH)) {
                 player.giveExperiencePoints((int) (event.getAmount() / 2.0F));

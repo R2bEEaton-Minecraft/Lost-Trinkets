@@ -1,6 +1,7 @@
 package owmii.losttrinkets.item;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -11,7 +12,7 @@ import owmii.losttrinkets.LostTrinkets;
 
 public final class ItemGroups {
     public static final DeferredRegister<CreativeModeTab> REG =
-            DeferredRegister.create(ForgeRegistries.CREATIVE_MODE_TABS, LostTrinkets.MOD_ID);
+            DeferredRegister.create(Registries.CREATIVE_MODE_TAB, LostTrinkets.MOD_ID);
     public static final RegistryObject<CreativeModeTab> MAIN = REG.register(LostTrinkets.MOD_ID, () ->
             CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup." + LostTrinkets.MOD_ID))

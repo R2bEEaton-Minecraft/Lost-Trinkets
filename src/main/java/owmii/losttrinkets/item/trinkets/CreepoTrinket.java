@@ -14,11 +14,10 @@ public class CreepoTrinket extends Trinket {
     }
 
     public static void resetExplosion(CriticalHitEvent event) {
-        if (LostTrinketsAPI.getTrinkets(event.getPlayer()).isActive(Itms.CREEPO)) {
+        if (LostTrinketsAPI.getTrinkets(event.getEntity()).isActive(Itms.CREEPO)) {
             Entity target = event.getTarget();
             if (target instanceof Creeper creeper) {
-                creeper.swell = 0;
-                creeper.oldSwell = 0;
+                creeper.setSwellDir(-1);
             }
         }
     }

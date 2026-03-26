@@ -27,12 +27,12 @@ public class TrinketUnlockedPacket implements IPacket<TrinketUnlockedPacket> {
 
     @Override
     public void encode(TrinketUnlockedPacket msg, FriendlyByteBuf buffer) {
-        buffer.writeString(msg.key);
+        buffer.writeUtf(msg.key);
     }
 
     @Override
     public TrinketUnlockedPacket decode(FriendlyByteBuf buffer) {
-        return new TrinketUnlockedPacket(buffer.readString(32767));
+        return new TrinketUnlockedPacket(buffer.readUtf(32767));
     }
 
     @Override

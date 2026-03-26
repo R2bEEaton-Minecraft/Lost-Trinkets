@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -95,7 +96,7 @@ public class HudHandler {
                     false
             );
 
-            String translated = Component.translatable(toast.getTrinket().getItem().getDescriptionId()).getString();
+            String translated = Component.translatable(((Item) toast.getTrinket()).getDescriptionId()).getString();
             guiGraphics.drawString(
                     mc.font,
                     StringUtils.abbreviate(translated, 20),

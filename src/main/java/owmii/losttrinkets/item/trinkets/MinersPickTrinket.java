@@ -12,7 +12,7 @@ public class MinersPickTrinket extends Trinket<MinersPickTrinket> {
     }
 
     public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
-        if (LostTrinketsAPI.getTrinkets(event.getPlayer()).isActive(Itms.MINERS_PICK)) {
+        if (LostTrinketsAPI.getTrinkets(event.getEntity()).isActive(Itms.MINERS_PICK)) {
             event.setNewSpeed(event.getOriginalSpeed() + 3.7F);
         }
     }

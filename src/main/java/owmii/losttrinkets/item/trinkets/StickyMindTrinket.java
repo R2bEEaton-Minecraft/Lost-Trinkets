@@ -21,13 +21,14 @@ public class StickyMindTrinket extends Trinket<StickyMindTrinket> {
 
     @SubscribeEvent
     public static void onEnderTeleport(EntityTeleportEvent.EnderEntity event) {
-        LivingEntity entity = event.getEntity();
-        AABB bb = new AABB(entity.blockPosition()).inflate(16.0D);
-        List<Player> players = entity.level().getEntitiesOfClass(Player.class, bb);
-        for (Player player : players) {
-            if (LostTrinketsAPI.getTrinkets(player).isActive(Itms.STICKY_MIND)) {
-                event.setCanceled(true);
-                break;
+        if (event.getEntity() instanceof LivingEntity entity) {
+            AABB bb = new AABB(entity.blockPosition()).inflate(16.0D);
+            List<Player> players = entity.level().getEntitiesOfClass(Player.class, bb);
+            for (Player player : players) {
+                if (LostTrinketsAPI.getTrinkets(player).isActive(Itms.STICKY_MIND)) {
+                    event.setCanceled(true);
+                    break;
+                }
             }
         }
     }

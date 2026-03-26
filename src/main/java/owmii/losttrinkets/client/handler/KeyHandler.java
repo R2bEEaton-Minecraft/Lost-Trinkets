@@ -27,7 +27,8 @@ public final class KeyHandler {
     public static final KeyMapping MAGNETO = new KeyMapping(
             "key.losttrinkets.magneto",
             KeyConflictContext.IN_GAME,
-            InputConstants.UNKNOWN.getValue(),
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_UNKNOWN,
             TRINKET_CATEGORY
     );
 

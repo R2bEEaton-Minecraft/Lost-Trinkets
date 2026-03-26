@@ -33,11 +33,10 @@ public class MagnetoPacket implements IPacket<MagnetoPacket> {
                 List<ItemEntity> entities = player.level().getEntitiesOfClass(ItemEntity.class, bb);
                 List<ExperienceOrb> orbEntities = player.level().getEntitiesOfClass(ExperienceOrb.class, bb);
                 entities.stream().filter(Magnet::canCollectManual).forEach(entity -> {
-                    entity.setNoPickupDelay();
+                    entity.setNoPickUpDelay();
                     entity.playerTouch(player);
                 });
                 orbEntities.stream().filter(Magnet::canCollectManual).forEach(orb -> {
-                    player.takeXpDelay = 0;
                     orb.playerTouch(player);
                 });
             }

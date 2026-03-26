@@ -4,6 +4,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
@@ -21,7 +23,7 @@ import java.util.UUID;
 public class TargetHandler {
     public static boolean preventTargeting(LivingEntity attacker, @Nullable LivingEntity target) {
         if (attacker instanceof Mob mob && target instanceof Player player) {
-            if (!mob.isNonBoss()) {
+            if (mob instanceof EnderDragon || mob instanceof WitherBoss) {
                 return false;
             }
             boolean notAttacked = !player.equals(mob.getLastHurtByMob()) && !player.equals(mob.getLastHurtMob());

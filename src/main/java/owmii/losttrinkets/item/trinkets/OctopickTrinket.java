@@ -2,21 +2,21 @@ package owmii.losttrinkets.item.trinkets;
 
 import com.google.common.collect.Sets;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BlockState;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LevelEvent;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ExperienceOrbEntity;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.ServerPlayerEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.Tags;
 import net.minecraft.nbt.Tag;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.level.BlockEvent;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.trinket.Rarity;
 import owmii.losttrinkets.api.trinket.Trinket;
@@ -26,7 +26,7 @@ import owmii.losttrinkets.item.Itms;
 import java.util.Set;
 
 public class OctopickTrinket extends Trinket<OctopickTrinket> {
-    private static final ThreadLocal<ServerPlayerEntity> octoMiningPlayer = new ThreadLocal<>();
+    private static final ThreadLocal<ServerPlayer> octoMiningPlayer = new ThreadLocal<>();
 
     public OctopickTrinket(Rarity rarity, Properties properties) {
         super(rarity, properties);
@@ -35,11 +35,10 @@ public class OctopickTrinket extends Trinket<OctopickTrinket> {
     public static void onBreak(BlockEvent.BreakEvent event) {
         if (octoMiningPlayer.get() != null) return;
         try {
-            PlayerEntity player = event.getPlayer();
-            if (player instanceof ServerPlayerEntity) {
-                ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
+            Player player = event.getPlayer();
+            if (player instanceof ServerPlayer serverPlayer) {
                 octoMiningPlayer.set(serverPlayer);
-                if (OctopickTrinket.mine(serverPlayer, serverPlayer.getServerWorld(), event.getPos(), event.getState())) {
+                if (OctopickTrinket.mine(serverPlayer, serverPlayer.serverLevel(), event.getPos(), event.getState())) {
                     event.setCanceled(true);
                 }
             }
@@ -48,23 +47,23 @@ public class OctopickTrinket extends Trinket<OctopickTrinket> {
         }
     }
 
-    private static boolean mine(ServerPlayerEntity player, ServerWorld world, BlockPos pos, BlockState state) {
-        if (ForgeHooks.canHarvestBlock(state, player, world, pos)) {
+    private static boolean mine(ServerPlayer player, ServerLevel world, BlockPos pos, BlockState state) {
+        if (!state.requiresCorrectToolForDrops() || player.hasCorrectToolForDrops(state)) {
             Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
             if (trinkets.isActive(Itms.OCTOPICK)) {
                 Set<BlockPos> toBreak = Sets.newLinkedHashSet();
-                if (Tags.Blocks.ORES.contains(state.getBlock()) || state.getBlock() == Blocks.OBSIDIAN) {
+                if (state.is(Tags.Blocks.ORES) || state.getBlock() == Blocks.OBSIDIAN) {
                     toBreak.add(pos);
-                    for (BlockPos pos1 : BlockPos.getAllInBoxMutable(pos.add(-1, -1, -1), pos.add(1, 1, 1))) {
+                    for (BlockPos pos1 : BlockPos.betweenClosed(pos.offset(-1, -1, -1), pos.offset(1, 1, 1))) {
                         if (toBreak.contains(pos1)) continue;
                         BlockState state1 = world.getBlockState(pos1);
                         if (state.getBlock() == state1.getBlock()) {
-                            toBreak.add(pos1.toImmutable());
-                            for (BlockPos pos2 : BlockPos.getAllInBoxMutable(pos1.add(-1, -1, -1), pos1.add(1, 1, 1))) {
+                            toBreak.add(new BlockPos(pos1));
+                            for (BlockPos pos2 : BlockPos.betweenClosed(pos1.offset(-1, -1, -1), pos1.offset(1, 1, 1))) {
                                 if (toBreak.contains(pos2)) continue;
                                 BlockState state2 = world.getBlockState(pos2);
                                 if (state.getBlock() == state2.getBlock()) {
-                                    toBreak.add(pos2.toImmutable());
+                                    toBreak.add(new BlockPos(pos2));
                                 }
                             }
                         }
@@ -73,9 +72,9 @@ public class OctopickTrinket extends Trinket<OctopickTrinket> {
                 if (toBreak.size() > 1) {
                     toBreak.forEach(breakPos -> {
                         BlockState breakState = world.getBlockState(breakPos);
-                        if (breakState.canHarvestBlock(world, breakPos, player)) {
-                            if (player.interactionManager.tryHarvestBlock(breakPos)) {
-                                world.playEvent(Constants.WorldEvents.BREAK_BLOCK_EFFECTS, breakPos, Block.getStateId(breakState));
+                        if (!breakState.requiresCorrectToolForDrops() || player.hasCorrectToolForDrops(breakState)) {
+                            if (player.gameMode.destroyBlock(breakPos)) {
+                                world.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, breakPos, Block.getId(breakState));
                             }
                         }
                     });
@@ -86,24 +85,26 @@ public class OctopickTrinket extends Trinket<OctopickTrinket> {
         return false;
     }
 
-    public static void collectDrops(EntityJoinWorldEvent event) {
-        ServerPlayerEntity player = octoMiningPlayer.get();
+    public static void collectDrops(EntityJoinLevelEvent event) {
+        ServerPlayer player = octoMiningPlayer.get();
         if (player != null) {
             Entity entity = event.getEntity();
-            if (entity.isAlive() && entity.world == player.world) {
+            if (entity.isAlive() && entity.level() == player.level()) {
                 boolean valid = true;
                 if (entity instanceof ItemEntity) {
-                    ((ItemEntity) entity).setNoPickupDelay();
-                } else if (entity instanceof ExperienceOrbEntity) {
-                    ((ExperienceOrbEntity) entity).delayBeforeCanPickup = 0;
-                    player.xpCooldown = 0;
+                    ((ItemEntity) entity).setNoPickUpDelay();
+                } else if (entity instanceof ExperienceOrb) {
                 } else {
                     valid = false;
                 }
                 if (valid) {
-                    Vector3d pos = player.getPositionVec();
-                    entity.setPosition(pos.x, pos.y, pos.z);
-                    entity.onCollideWithPlayer(player);
+                    Vec3 pos = player.position();
+                    entity.moveTo(pos.x, pos.y, pos.z);
+                    if (entity instanceof ItemEntity itemEntity) {
+                        itemEntity.playerTouch(player);
+                    } else if (entity instanceof ExperienceOrb orb) {
+                        orb.playerTouch(player);
+                    }
                     if (!entity.isAlive()) {
                         event.setCanceled(true);
                     }

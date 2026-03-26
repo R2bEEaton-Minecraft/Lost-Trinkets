@@ -24,7 +24,7 @@ public class Configs {
         String type = event instanceof ModConfigEvent.Loading ? "Loading" : "Reloading";
         ModConfig modConfig = event.getConfig();
         LOGGER.info(MARKER, type + " " + modConfig.getFileName());
-        ForgeConfigSpec spec = modConfig.getSpec();
+        ForgeConfigSpec spec = (ForgeConfigSpec) modConfig.getSpec();
         if (spec == GENERAL_SPEC) {
             GENERAL.refresh();
         }

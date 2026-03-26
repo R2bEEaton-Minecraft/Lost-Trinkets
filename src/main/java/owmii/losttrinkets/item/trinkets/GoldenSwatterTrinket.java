@@ -24,9 +24,7 @@ public class GoldenSwatterTrinket extends Trinket<GoldenSwatterTrinket> {
             if (entity instanceof Player player) {
                 Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
                 if (trinkets.isActive(Itms.GOLDEN_SWATTER)) {
-                    if (living.isNonBoss()) {
-                        living.setHealth(0.5F);
-                    }
+                    living.setHealth(0.5F);
                 }
             }
         }

@@ -10,6 +10,6 @@ public class Sounds {
     public static final SoundEvent UNLOCK = register("unlock");
 
     static SoundEvent register(String name) {
-        return REG.register(name, new SoundEvent(new ResourceLocation(LostTrinkets.MOD_ID, name)));
+        return REG.register(name, SoundEvent.createVariableRangeEvent(new ResourceLocation(LostTrinkets.MOD_ID, name)));
     }
 }

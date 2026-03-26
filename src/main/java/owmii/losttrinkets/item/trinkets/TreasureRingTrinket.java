@@ -1,15 +1,20 @@
 package owmii.losttrinkets.item.trinkets;
 
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.loot.*;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import owmii.lib.util.Server;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.trinket.Rarity;
 import owmii.losttrinkets.api.trinket.Trinket;
@@ -26,32 +31,32 @@ public class TreasureRingTrinket extends Trinket<TreasureRingTrinket> {
     }
 
     static {
-        LOOTS.add(LootTables.CHESTS_NETHER_BRIDGE);
-        LOOTS.add(LootTables.CHESTS_JUNGLE_TEMPLE);
-        LOOTS.add(LootTables.CHESTS_BURIED_TREASURE);
-        LOOTS.add(LootTables.CHESTS_END_CITY_TREASURE);
-        LOOTS.add(LootTables.CHESTS_ABANDONED_MINESHAFT);
-        LOOTS.add(LootTables.CHESTS_DESERT_PYRAMID);
-        LOOTS.add(LootTables.CHESTS_SIMPLE_DUNGEON);
-        LOOTS.add(LootTables.CHESTS_STRONGHOLD_LIBRARY);
-        LOOTS.add(LootTables.CHESTS_STRONGHOLD_CORRIDOR);
-        LOOTS.add(LootTables.CHESTS_STRONGHOLD_CROSSING);
-        LOOTS.add(LootTables.CHESTS_VILLAGE_VILLAGE_WEAPONSMITH);
+        LOOTS.add(BuiltInLootTables.NETHER_BRIDGE);
+        LOOTS.add(BuiltInLootTables.JUNGLE_TEMPLE);
+        LOOTS.add(BuiltInLootTables.BURIED_TREASURE);
+        LOOTS.add(BuiltInLootTables.END_CITY_TREASURE);
+        LOOTS.add(BuiltInLootTables.ABANDONED_MINESHAFT);
+        LOOTS.add(BuiltInLootTables.DESERT_PYRAMID);
+        LOOTS.add(BuiltInLootTables.SIMPLE_DUNGEON);
+        LOOTS.add(BuiltInLootTables.STRONGHOLD_LIBRARY);
+        LOOTS.add(BuiltInLootTables.STRONGHOLD_CORRIDOR);
+        LOOTS.add(BuiltInLootTables.STRONGHOLD_CROSSING);
+        LOOTS.add(BuiltInLootTables.VILLAGE_WEAPONSMITH);
     }
 
     public static void onDrops(LivingDropsEvent event) {
         DamageSource source = event.getSource();
-        if (source.getTrueSource() instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) source.getTrueSource();
+        if (source.getEntity() instanceof Player player) {
             if (LostTrinketsAPI.getTrinkets(player).isActive(Itms.TREASURE_RING)) {
-                LivingEntity target = event.getEntityLiving();
-                if (!target.isNonBoss() && player.world instanceof ServerWorld) {
-                    LootContext.Builder builder = new LootContext.Builder((ServerWorld) player.world);
-                    builder.withParameter(LootParameters.field_237457_g_, target.getPositionVec()).withSeed(player.world.rand.nextLong());
-                    builder.withLuck(player.getLuck()).withParameter(LootParameters.THIS_ENTITY, player);
-                    LootTable lootTable = Server.get().getLootTableManager().getLootTableFromLocation(LOOTS.get(player.world.rand.nextInt(LOOTS.size())));
-                    List<ItemStack> stacks = lootTable.generate(builder.build(LootParameterSets.CHEST));
-                    stacks.forEach(stack -> event.getDrops().add(new ItemEntity(target.world, target.getPosX(), target.getPosY(), target.getPosZ(), stack)));
+                LivingEntity target = event.getEntity();
+                if ((target instanceof EnderDragon || target instanceof WitherBoss) && player.level() instanceof ServerLevel level) {
+                    LootParams.Builder builder = new LootParams.Builder(level)
+                            .withParameter(LootContextParams.ORIGIN, target.position())
+                            .withParameter(LootContextParams.THIS_ENTITY, player)
+                            .withLuck(player.getLuck());
+                    LootTable lootTable = level.getServer().getLootData().getLootTable(LOOTS.get(level.random.nextInt(LOOTS.size())));
+                    List<ItemStack> stacks = lootTable.getRandomItems(builder.create(LootContextParamSets.CHEST));
+                    stacks.forEach(stack -> event.getDrops().add(new ItemEntity(target.level(), target.getX(), target.getY(), target.getZ(), stack)));
                 }
             }
         }

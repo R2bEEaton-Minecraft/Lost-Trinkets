@@ -15,12 +15,11 @@ public class DarkDaggerTrinket extends Trinket<DarkDaggerTrinket> {
     }
 
     public static void onHurt(LivingHurtEvent event) {
-        Entity entity = event.getSource().getImmediateSource();
-        if (entity instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) entity;
+        Entity entity = event.getSource().getDirectEntity();
+        if (entity instanceof Player player) {
             Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
             if (trinkets.isActive(Itms.DARK_DAGGER)) {
-                player.heal(Math.max(Math.min(event.getAmount(), event.getEntityLiving().getHealth()) / 2.0F, 1.0F));
+                player.heal(Math.max(Math.min(event.getAmount(), event.getEntity().getHealth()) / 2.0F, 1.0F));
             }
         }
     }

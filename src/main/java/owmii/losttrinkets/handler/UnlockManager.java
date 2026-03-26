@@ -151,7 +151,7 @@ public class UnlockManager {
         nonRandom.stream().filter(banned::contains)
                 .forEach(rl -> LOGGER.warn(MARKER, "Redundant Non-Random Trinket (already banned): " + rl));
         if (LostTrinkets.NET != null) {
-            var server = net.minecraftforge.fml.server.ServerLifecycleHooks.getCurrentServer();
+            var server = net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer();
             if (server != null) {
                 server.execute(() -> server.getPlayerList().getPlayers()
                         .forEach(player -> LostTrinketsAPI.getTrinkets(player).removeDisabled(player)));

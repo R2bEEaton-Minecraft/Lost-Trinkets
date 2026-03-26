@@ -38,7 +38,7 @@ public class MagnetoTrinket extends Trinket<MagnetoTrinket> {
     @SubscribeEvent
     public static void collectUse(PlayerInteractEvent.RightClickEmpty event) {
         if (KeyHandler.MAGNETO.isUnbound() && event.getHand() == InteractionHand.MAIN_HAND) {
-            trySendCollect(event.getPlayer());
+            trySendCollect(event.getEntity());
         }
     }
 

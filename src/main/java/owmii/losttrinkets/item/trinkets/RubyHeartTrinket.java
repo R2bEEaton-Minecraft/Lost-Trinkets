@@ -54,7 +54,7 @@ public class RubyHeartTrinket extends Trinket<RubyHeartTrinket> {
     }
 
     public static void onDeath(LivingDeathEvent event) {
-        if (!event.getSource().canHarmInCreative()) {
+        if (!event.getSource().isCreativePlayer()) {
             LivingEntity entity = event.getEntity();
             if (entity instanceof Player player) {
                 Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);

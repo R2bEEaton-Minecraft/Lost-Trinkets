@@ -14,10 +14,10 @@ public class ThaSpiderTrinket extends Trinket<ThaSpiderTrinket> {
     }
 
     public static boolean doClimb(LivingEntity entity) {
-        if (entity instanceof PlayerEntity) {
-            Trinkets trinkets = LostTrinketsAPI.getTrinkets((PlayerEntity) entity);
+        if (entity instanceof Player player) {
+            Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
             if (trinkets.isActive(Itms.THA_SPIDER)) {
-                return entity.collidedHorizontally;
+                return entity.horizontalCollision;
             }
         }
         return false;

@@ -4,7 +4,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import owmii.losttrinkets.LostTrinkets;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.trinket.ITrinket;
 import owmii.losttrinkets.api.trinket.Trinkets;
@@ -19,7 +21,7 @@ public class TrinketOptionScreen extends AbstractLTScreen {
     protected final Screen prevScreen;
 
     protected TrinketOptionScreen(ITrinket trinket, @Nullable Screen prevScreen) {
-        super(Component.translatable(trinket.getItem().getDescriptionId()));
+        super(Component.translatable(((Item) trinket).getDescriptionId()));
         this.trinket = trinket;
         this.prevScreen = prevScreen;
     }
@@ -56,7 +58,7 @@ public class TrinketOptionScreen extends AbstractLTScreen {
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-        String name = Component.translatable(this.trinket.getItem().getDescriptionId()).getString();
+        String name = Component.translatable(((Item) this.trinket).getDescriptionId()).getString();
         guiGraphics.drawString(this.font, name, 8 + x - this.font.width(name) / 2, y + 32, 0x999999, false);
     }
 

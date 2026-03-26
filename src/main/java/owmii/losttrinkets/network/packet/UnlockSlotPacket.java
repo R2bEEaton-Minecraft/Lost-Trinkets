@@ -32,7 +32,7 @@ public class UnlockSlotPacket implements IPacket<UnlockSlotPacket> {
                         trinkets.unlockSlot();
                     } else if (player.experienceLevel >= cost) {
                         if (trinkets.unlockSlot()) {
-                            player.addExperienceLevel(-cost);
+                            player.giveExperienceLevels(-cost);
                         }
                     }
                 }

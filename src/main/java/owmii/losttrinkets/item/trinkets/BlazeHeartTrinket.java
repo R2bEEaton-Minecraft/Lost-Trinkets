@@ -18,7 +18,7 @@ public class BlazeHeartTrinket extends Trinket<BlazeHeartTrinket> {
         if (target instanceof Player player) {
             if (LostTrinketsAPI.getTrinkets(player).isActive(Itms.BLAZE_HEART)) {
                 if (source.is(DamageTypeTags.IS_FIRE)) {
-                    player.extinguish();
+                    player.clearFire();
                     return true;
                 }
             }

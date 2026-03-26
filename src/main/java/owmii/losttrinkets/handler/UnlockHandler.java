@@ -5,6 +5,8 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -94,7 +96,7 @@ public class UnlockHandler {
             Entity entity = source.getEntity();
             LivingEntity target = event.getEntity();
             if (entity instanceof Player player && !player.level().isClientSide) {
-                if (target.isNonBoss()) {
+                if (!(target instanceof EnderDragon) && !(target instanceof WitherBoss)) {
                     if (Configs.GENERAL.killingUnlockEnabled.get()) {
                         queueUnlock(player, Type.KILL);
                     }
@@ -107,7 +109,7 @@ public class UnlockHandler {
 
     public static void checkBlockHarvest(Player player, Level level, BlockPos pos, BlockState state) {
         if (Configs.GENERAL.unlockEnabled.get() && !player.level().isClientSide) {
-            if (Tags.Blocks.ORES.contains(state.getBlock())) {
+            if (state.is(Tags.Blocks.ORES)) {
                 if (Configs.GENERAL.oresMiningUnlockEnabled.get()) {
                     queueUnlock(player, Type.ORE_MINE);
                 }

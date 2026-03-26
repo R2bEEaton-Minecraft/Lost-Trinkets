@@ -75,11 +75,18 @@ public abstract class DarkEntity extends Vex {
     }
 
     @Nullable
-    public UUID getOwner() {
-        return this.owner;
+    @Override
+    public Mob getOwner() {
+        return null;
+    }
+
+    @Nullable
+    public Player getOwnerPlayer() {
+        return this.player;
     }
 
     public void setOwner(Player owner) {
         this.owner = owner.getUUID();
+        this.player = owner;
     }
 }
