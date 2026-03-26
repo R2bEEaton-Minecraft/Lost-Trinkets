@@ -9,8 +9,8 @@ public class Screens {
 
     public static void checkScreenRefresh() {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.currentScreen instanceof AbstractLTScreen) {
-            ((AbstractLTScreen) mc.currentScreen).refresh();
+        if (mc.screen instanceof AbstractLTScreen abstractLTScreen) {
+            abstractLTScreen.refresh();
         }
     }
 }

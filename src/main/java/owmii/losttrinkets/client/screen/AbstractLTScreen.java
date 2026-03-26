@@ -1,6 +1,6 @@
 package owmii.losttrinkets.client.screen;
 
-import net.minecraft.client.util.InputMappings;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import owmii.lib.client.screen.ScreenBase;
 import owmii.losttrinkets.client.handler.KeyHandler;
@@ -10,16 +10,16 @@ import javax.annotation.Nullable;
 public class AbstractLTScreen extends ScreenBase {
     private boolean refresh;
     @Nullable
-    private AbstractLTScreen toRefresh;
+    private Screen toRefresh;
 
-    protected AbstractLTScreen(ITextComponent title) {
+    protected AbstractLTScreen(Component title) {
         super(title);
     }
 
     @Override
     public void tick() {
         if (this.refresh && this.toRefresh != null) {
-            this.mc.displayGuiScreen(this.toRefresh);
+            this.minecraft.setScreen(this.toRefresh);
             this.refresh = false;
             this.toRefresh = null;
         }
@@ -29,22 +29,18 @@ public class AbstractLTScreen extends ScreenBase {
         this.refresh = true;
     }
 
-    public void setRefreshScreen(@Nullable AbstractLTScreen screen) {
+    public void setRefreshScreen(@Nullable Screen screen) {
         this.toRefresh = screen;
     }
 
     @Override
-    public boolean keyPressed(int p_231046_1_, int p_231046_2_, int p_231046_3_) {
-        if (super.keyPressed(p_231046_1_, p_231046_2_, p_231046_3_)) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (super.keyPressed(keyCode, scanCode, modifiers)) {
             return true;
-        } else {
-            InputMappings.Input code = InputMappings.getInputByCode(p_231046_1_, p_231046_2_);
-            if (KeyHandler.TRINKET_GUI.isActiveAndMatches(code)) {
-                if (this.mc.player != null) {
-                    closeScreen();
-                }
-                return true;
-            }
+        }
+        if (KeyHandler.TRINKET_GUI.matches(keyCode, scanCode) && this.minecraft.player != null) {
+            onClose();
+            return true;
         }
         return false;
     }

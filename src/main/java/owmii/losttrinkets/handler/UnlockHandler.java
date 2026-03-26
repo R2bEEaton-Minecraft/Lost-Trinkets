@@ -13,7 +13,6 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
-import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
@@ -120,16 +119,6 @@ public class UnlockHandler {
                 if (Configs.GENERAL.woodCuttingUnlockEnabled.get()) {
                     queueUnlock(player, Type.WOOD_CUTTING);
                 }
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void useHoe(UseHoeEvent event) {
-        if (Configs.GENERAL.unlockEnabled.get() && Configs.GENERAL.farmingUnlockEnabled.get()) {
-            Player player = event.getEntity();
-            if (!player.level().isClientSide) {
-                queueUnlock(player, Type.FARM_HARVEST);
             }
         }
     }

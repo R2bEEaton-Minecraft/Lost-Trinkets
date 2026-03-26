@@ -1,13 +1,10 @@
 package owmii.losttrinkets.client.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import owmii.losttrinkets.LostTrinkets;
+import net.minecraft.world.item.ItemStack;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.trinket.ITrinket;
 import owmii.losttrinkets.api.trinket.Trinkets;
@@ -15,26 +12,26 @@ import owmii.losttrinkets.network.packet.SetInactivePacket;
 
 import javax.annotation.Nullable;
 
-
 public class TrinketOptionScreen extends AbstractLTScreen {
     private final ITrinket trinket;
-    private Button button;
 
     @Nullable
     protected final Screen prevScreen;
 
     protected TrinketOptionScreen(ITrinket trinket, @Nullable Screen prevScreen) {
-        super(new TranslationTextComponent(trinket.getItem().getTranslationKey()));
+        super(Component.translatable(trinket.getItem().getDescriptionId()));
         this.trinket = trinket;
         this.prevScreen = prevScreen;
     }
 
     @Override
     protected void init() {
+        super.init();
+        clearWidgets();
         int x = this.width / 2 - 60 / 2;
         int y = this.height / 3 - 20 / 2;
         if (this.mc.player != null) {
-            this.button = addButton(new Button(x, y + 70, 60, 20, new TranslationTextComponent("Remove"), (p_214293_1_) -> {
+            addRenderableWidget(Button.builder(Component.literal("Remove"), button -> {
                 Trinkets trinkets = LostTrinketsAPI.getTrinkets(this.mc.player);
                 int i = trinkets.getActiveTrinkets().indexOf(this.trinket);
                 if (i >= 0) {
@@ -42,31 +39,33 @@ public class TrinketOptionScreen extends AbstractLTScreen {
                     trinkets.setInactive(this.trinket, this.mc.player);
                     setRefreshScreen(new TrinketsScreen());
                 }
-            }));
+            }).bounds(x, y + 70, 60, 20).build());
         }
     }
 
     @Override
-    public void render(MatrixStack matrix, int mx, int my, float pt) {
-        renderBackground(matrix);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        renderBackground(guiGraphics);
         int x = this.width / 2 - 16 / 2;
         int y = this.height / 3 - 16 / 2;
-        RenderSystem.pushMatrix();
-        RenderSystem.translated(x - 16.0F, y - 16.0F, 0.0F);
-        RenderSystem.scaled(3.0F, 3.0F, 1.0F);
-        this.mc.getItemRenderer().renderItemAndEffectIntoGUI(new ItemStack(this.trinket), 0, 0);
-        RenderSystem.popMatrix();
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(x - 16.0D, y - 16.0D, 0.0D);
+        guiGraphics.pose().scale(3.0F, 3.0F, 1.0F);
+        guiGraphics.renderItem(new ItemStack(this.trinket), 0, 0);
+        guiGraphics.pose().popPose();
 
-        super.render(matrix, mx, my, pt);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-        String name = I18n.format(this.trinket.getItem().getTranslationKey());
-        this.font.drawString(matrix, name, 8 + x - this.font.getStringWidth(name) / 2, y + 32, 0x999999);
+        String name = Component.translatable(this.trinket.getItem().getDescriptionId()).getString();
+        guiGraphics.drawString(this.font, name, 8 + x - this.font.width(name) / 2, y + 32, 0x999999, false);
     }
 
     @Override
-    public void closeScreen() {
-        if (this.prevScreen instanceof TrinketsScreen) {
-            this.mc.displayGuiScreen(this.prevScreen);
+    public void onClose() {
+        if (this.prevScreen != null) {
+            this.minecraft.setScreen(this.prevScreen);
+        } else {
+            super.onClose();
         }
     }
 }

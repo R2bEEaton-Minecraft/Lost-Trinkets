@@ -1,11 +1,10 @@
 package owmii.losttrinkets.item.trinkets;
 
-import net.minecraft.world.entity.CreatureEntity;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.MobEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import owmii.losttrinkets.api.trinket.ITargetingTrinket;
 import owmii.losttrinkets.api.trinket.Rarity;
 import owmii.losttrinkets.api.trinket.Trinket;
@@ -16,15 +15,14 @@ public class BigFootTrinket extends Trinket<BigFootTrinket> implements ITargetin
         super(rarity, properties);
     }
 
-    public static void addAvoidGoal(EntityJoinWorldEvent event) {
+    public static void addAvoidGoal(EntityJoinLevelEvent event) {
         Entity entity = event.getEntity();
-        if (entity instanceof CreatureEntity) {
-            CreatureEntity mob = (CreatureEntity) entity;
+        if (entity instanceof PathfinderMob mob) {
             mob.goalSelector.addGoal(-1, new BigFootGoal(mob));
         }
     }
 
-    public boolean preventTargeting(MobEntity mob, PlayerEntity player, boolean notAttacked) {
-        return mob.isChild();
+    public boolean preventTargeting(Mob mob, Player player, boolean notAttacked) {
+        return mob.isBaby();
     }
 }
