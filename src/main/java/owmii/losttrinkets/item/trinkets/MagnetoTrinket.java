@@ -4,9 +4,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.Util;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -29,7 +28,7 @@ public class MagnetoTrinket extends Trinket<MagnetoTrinket> {
         super(rarity, properties);
     }
 
-    public static void trySendCollect(PlayerEntity player) {
+    public static void trySendCollect(Player player) {
         Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
         if (trinkets.isActive(Itms.MAGNETO)) {
             LostTrinkets.NET.toServer(new MagnetoPacket());
@@ -38,19 +37,19 @@ public class MagnetoTrinket extends Trinket<MagnetoTrinket> {
 
     @SubscribeEvent
     public static void collectUse(PlayerInteractEvent.RightClickEmpty event) {
-        if (KeyHandler.MAGNETO.isInvalid() && event.getHand() == Hand.MAIN_HAND) {
+        if (KeyHandler.MAGNETO.isUnbound() && event.getHand() == InteractionHand.MAIN_HAND) {
             trySendCollect(event.getPlayer());
         }
     }
 
     @Override
-    public void addTrinketDescription(ItemStack stack, List<ITextComponent> lines) {
+    public void addTrinketDescription(ItemStack stack, List<Component> lines) {
         super.addTrinketDescription(stack, lines);
-        String translationKey = Util.makeTranslationKey("info", Registry.ITEM.getKey(stack.getItem()));
-        if (KeyHandler.MAGNETO.isInvalid()) {
-            lines.add(new TranslationTextComponent(translationKey + ".unbound").mergeStyle(TextFormatting.GRAY));
+        String translationKey = Util.makeDescriptionId("info", BuiltInRegistries.ITEM.getKey(stack.getItem()));
+        if (KeyHandler.MAGNETO.isUnbound()) {
+            lines.add(Component.translatable(translationKey + ".unbound").withStyle(ChatFormatting.GRAY));
         } else {
-            lines.add(new TranslationTextComponent(translationKey + ".bound", KeyHandler.MAGNETO.func_238171_j_()).mergeStyle(TextFormatting.GRAY));
+            lines.add(Component.translatable(translationKey + ".bound", KeyHandler.MAGNETO.getTranslatedKeyMessage()).withStyle(ChatFormatting.GRAY));
         }
     }
 }

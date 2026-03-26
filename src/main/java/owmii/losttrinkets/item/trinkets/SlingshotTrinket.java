@@ -2,7 +2,7 @@ package owmii.losttrinkets.item.trinkets;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.trinket.Rarity;
@@ -16,12 +16,12 @@ public class SlingshotTrinket extends Trinket<SlingshotTrinket> {
     }
 
     public static void onHurt(LivingHurtEvent event) {
-        Entity entity = event.getSource().getImmediateSource();
-        if (entity instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) entity;
+        Entity entity = event.getSource().getDirectEntity();
+        if (entity instanceof Player player) {
             Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
             if (trinkets.isActive(Itms.SLINGSHOT)) {
-                event.getEntityLiving().applyKnockback(1.4F, (double) MathHelper.sin(player.rotationYaw * ((float) Math.PI / 180F)), (double) (-MathHelper.cos(player.rotationYaw * ((float) Math.PI / 180F))));
+                float yRot = player.getYRot() * ((float) Math.PI / 180F);
+                event.getEntity().knockback(1.4F, (double) Mth.sin(yRot), (double) (-Mth.cos(yRot)));
             }
         }
     }

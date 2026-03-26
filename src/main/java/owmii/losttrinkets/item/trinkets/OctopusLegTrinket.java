@@ -5,9 +5,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.DamageSource;
+import net.minecraft.server.TickTask;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.util.concurrent.TickDelayedTask;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -23,45 +23,40 @@ public class OctopusLegTrinket extends Trinket<OctopusLegTrinket> {
     }
 
     public static void onAttack(LivingAttackEvent event) {
-        LivingEntity entity = event.getEntityLiving();
-        World world = entity.getEntityWorld();
-        if (!(world instanceof ServerWorld)) return;
+        LivingEntity entity = event.getEntity();
+        Level world = entity.level();
+        if (!(world instanceof ServerLevel serverLevel)) return;
         DamageSource source = event.getSource();
-        if (source == null) return;
-        Entity immediateSource = source.getImmediateSource();
-        if (entity instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) entity;
+        Entity immediateSource = source.getDirectEntity();
+        if (entity instanceof Player player) {
             Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
-            if (immediateSource instanceof LivingEntity) {
-                LivingEntity living = (LivingEntity) immediateSource;
+            if (immediateSource instanceof LivingEntity living) {
                 if (trinkets.isActive(Itms.OCTOPUS_LEG)) {
-                    MinecraftServer server = ((ServerWorld) world).getServer();
+                    MinecraftServer server = serverLevel.getServer();
                     // Delay disarming till after goal ticking to avoid crashing
-                    server.enqueue(new TickDelayedTask(server.getTickCounter(), () -> {
-                        disarm(world, living);
-                    }));
+                    server.tell(new TickTask(server.getTickCount(), () -> disarm(world, living)));
                 }
             }
         }
     }
 
-    private static void disarm(World world, LivingEntity living) {
+    private static void disarm(Level world, LivingEntity living) {
         if (!living.isAlive()) return;
-        ItemStack stack = living.getHeldItemMainhand();
-        if (!stack.isEmpty() && world.rand.nextInt(5) == 0) {
+        ItemStack stack = living.getMainHandItem();
+        if (!stack.isEmpty() && world.random.nextInt(5) == 0) {
             ItemStack stack1 = stack.copy();
-            if (stack1.isDamageable()) {
+            if (stack1.isDamageableItem()) {
                 if (!stack1.isDamaged()) {
                     int damage = stack1.getMaxDamage();
                     if (damage > 10) {
                         damage /= 2;
-                        damage = 10 + world.rand.nextInt(damage);
+                        damage = 10 + world.random.nextInt(damage);
                     }
-                    stack1.setDamage(damage);
+                    stack1.setDamageValue(damage);
                 }
             }
-            living.entityDropItem(stack1);
-            living.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+            living.spawnAtLocation(stack1);
+            living.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         }
     }
 }

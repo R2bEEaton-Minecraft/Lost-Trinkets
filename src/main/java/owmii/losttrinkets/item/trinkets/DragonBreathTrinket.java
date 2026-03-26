@@ -1,12 +1,12 @@
 package owmii.losttrinkets.item.trinkets;
 
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.inventory.Inventory;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.FurnaceRecipe;
-import net.minecraft.world.item.crafting.IRecipeType;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SmeltingRecipe;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.trinket.Rarity;
 import owmii.losttrinkets.api.trinket.Trinket;
@@ -23,17 +23,18 @@ public class DragonBreathTrinket extends Trinket<DragonBreathTrinket> {
         super(rarity, properties);
     }
 
-    public static List<ItemStack> autoSmelt(List<ItemStack> stacks, PlayerEntity player) {
-        if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, player.getHeldItemMainhand()) <= 0) {
+    public static List<ItemStack> autoSmelt(List<ItemStack> stacks, Player player) {
+        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem()) <= 0) {
             Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
             if (trinkets.isActive(Itms.DRAGON_BREATH)) {
                 List<ItemStack> drops1 = new ArrayList<>();
                 List<ItemStack> stacks1 = new ArrayList<>(stacks);
                 Iterator<ItemStack> itr = stacks1.iterator();
                 while (itr.hasNext()) {
-                    Optional<FurnaceRecipe> recipe = player.world.getRecipeManager().getRecipe(IRecipeType.SMELTING, new Inventory(itr.next()), player.world);
+                    ItemStack input = itr.next();
+                    Optional<SmeltingRecipe> recipe = player.level().getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SimpleContainer(input), player.level());
                     if (recipe.isPresent()) {
-                        ItemStack output = recipe.get().getRecipeOutput().copy();
+                        ItemStack output = recipe.get().getResultItem(player.level().registryAccess()).copy();
                         if (!output.isEmpty()) {
                             drops1.add(output);
                             itr.remove();
