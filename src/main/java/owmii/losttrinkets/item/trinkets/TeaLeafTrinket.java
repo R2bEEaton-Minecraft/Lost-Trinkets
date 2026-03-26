@@ -1,12 +1,12 @@
 package owmii.losttrinkets.item.trinkets;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.Effects;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.living.PotionEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.eventbus.api.Event;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.trinket.Rarity;
@@ -19,13 +19,13 @@ public class TeaLeafTrinket extends Trinket<TeaLeafTrinket> {
         super(rarity, properties);
     }
 
-    public static void onPotion(PotionEvent.PotionApplicableEvent event) {
-        LivingEntity entity = event.getEntityLiving();
-        if (entity instanceof PlayerEntity) {
-            Trinkets trinkets = LostTrinketsAPI.getTrinkets((PlayerEntity) entity);
+    public static void onPotion(MobEffectEvent.Applicable event) {
+        LivingEntity entity = event.getEntity();
+        if (entity instanceof Player player) {
+            Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
             if (trinkets.isActive(Itms.TEA_LEAF)) {
-                Effect effect = event.getPotionEffect().getPotion();
-                if (effect.equals(Effects.WITHER) || effect.equals(Effects.POISON)) {
+                MobEffect effect = event.getEffectInstance().getEffect();
+                if (effect.equals(MobEffects.WITHER) || effect.equals(MobEffects.POISON)) {
                     event.setResult(Event.Result.DENY);
                 }
             }
@@ -33,9 +33,11 @@ public class TeaLeafTrinket extends Trinket<TeaLeafTrinket> {
     }
 
     @Override
-    public void onActivated(World world, BlockPos pos, PlayerEntity player) {
-        if (world.isRemote) return;
-        player.removePotionEffect(Effects.POISON);
-        player.removePotionEffect(Effects.WITHER);
+    public void onActivated(Level world, BlockPos pos, Player player) {
+        if (world.isClientSide) {
+            return;
+        }
+        player.removeEffect(MobEffects.POISON);
+        player.removeEffect(MobEffects.WITHER);
     }
 }

@@ -1,8 +1,8 @@
 package owmii.losttrinkets.item.trinkets;
 
-import net.minecraft.world.entity.MobEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.potion.Effects;
+import net.minecraft.world.effect.MobEffects;
 import owmii.losttrinkets.api.trinket.ITargetingTrinket;
 import owmii.losttrinkets.api.trinket.Rarity;
 import owmii.losttrinkets.api.trinket.Trinket;
@@ -12,7 +12,7 @@ public class ThaGhostTrinket extends Trinket<ThaGhostTrinket> implements ITarget
         super(rarity, properties);
     }
 
-    public boolean preventTargeting(MobEntity mob, PlayerEntity player, boolean notAttacked) {
-        return notAttacked && player.isPotionActive(Effects.INVISIBILITY);
+    public boolean preventTargeting(Mob mob, Player player, boolean notAttacked) {
+        return notAttacked && player.hasEffect(MobEffects.INVISIBILITY);
     }
 }

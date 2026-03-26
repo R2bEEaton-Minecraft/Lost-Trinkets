@@ -13,7 +13,7 @@ public class TurtleShellTrinket extends Trinket<TurtleShellTrinket> implements I
     }
 
     @Override
-    public void tick(World world, BlockPos pos, PlayerEntity player) {
-        player.setAir(player.getMaxAir());
+    public void tick(Level world, BlockPos pos, Player player) {
+        player.setAirSupply(player.getMaxAirSupply());
     }
 }

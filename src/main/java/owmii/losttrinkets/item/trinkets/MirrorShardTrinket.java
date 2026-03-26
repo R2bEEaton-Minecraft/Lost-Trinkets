@@ -3,7 +3,7 @@ package owmii.losttrinkets.item.trinkets;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.trinket.Rarity;
@@ -29,17 +29,14 @@ public class MirrorShardTrinket extends Trinket<MirrorShardTrinket> {
     }
 
     private static void mirrorDamage(LivingHurtEvent event) {
-        LivingEntity entity = event.getEntityLiving();
+        LivingEntity entity = event.getEntity();
         DamageSource source = event.getSource();
-        Entity trueSource = source.getTrueSource();
-        Entity immediateSource = source.getImmediateSource();
-        if (entity instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) entity;
+        Entity trueSource = source.getEntity();
+        if (entity instanceof Player player) {
             Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
-            if (trueSource instanceof LivingEntity) {
-                LivingEntity living = (LivingEntity) trueSource;
+            if (trueSource instanceof LivingEntity living) {
                 if (trinkets.isActive(Itms.MIRROR_SHARD)) {
-                    living.attackEntityFrom(DamageSource.causePlayerDamage(player), event.getAmount() / 2.0F);
+                    living.hurt(player.damageSources().playerAttack(player), event.getAmount() / 2.0F);
                 }
             }
         }

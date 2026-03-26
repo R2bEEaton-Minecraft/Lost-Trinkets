@@ -1,7 +1,7 @@
 package owmii.losttrinkets.item.trinkets;
 
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.monster.CreeperEntity;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.trinket.Rarity;
@@ -16,9 +16,9 @@ public class CreepoTrinket extends Trinket {
     public static void resetExplosion(CriticalHitEvent event) {
         if (LostTrinketsAPI.getTrinkets(event.getPlayer()).isActive(Itms.CREEPO)) {
             Entity target = event.getTarget();
-            if (target instanceof CreeperEntity) {
-                ((CreeperEntity) target).setCreeperState(-1);
-                ((CreeperEntity) target).timeSinceIgnited = 0;
+            if (target instanceof Creeper creeper) {
+                creeper.swell = 0;
+                creeper.oldSwell = 0;
             }
         }
     }

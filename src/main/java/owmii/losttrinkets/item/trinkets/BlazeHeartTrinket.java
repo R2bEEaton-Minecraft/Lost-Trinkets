@@ -1,8 +1,9 @@
 package owmii.losttrinkets.item.trinkets;
 
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.DamageSource;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.trinket.Rarity;
 import owmii.losttrinkets.api.trinket.Trinket;
@@ -14,10 +15,9 @@ public class BlazeHeartTrinket extends Trinket<BlazeHeartTrinket> {
     }
 
     public static boolean isImmuneToFire(LivingEntity target, DamageSource source) {
-        if (target instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) target;
+        if (target instanceof Player player) {
             if (LostTrinketsAPI.getTrinkets(player).isActive(Itms.BLAZE_HEART)) {
-                if (source.isFireDamage()) {
+                if (source.is(DamageTypeTags.IS_FIRE)) {
                     player.extinguish();
                     return true;
                 }

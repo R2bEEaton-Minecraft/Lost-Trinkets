@@ -1,8 +1,9 @@
 package owmii.losttrinkets.item.trinkets;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import owmii.losttrinkets.api.trinket.ITickableTrinket;
 import owmii.losttrinkets.api.trinket.Rarity;
@@ -14,11 +15,11 @@ public class MossyBeltTrinket extends Trinket<MossyBeltTrinket> implements ITick
     }
 
     @Override
-    public void tick(World world, BlockPos pos, PlayerEntity player) {
+    public void tick(Level world, BlockPos pos, Player player) {
         if (world.getGameTime() % 40 == 0) {
-            for (ItemStack stack : player.inventory.armorInventory) {
+            for (ItemStack stack : player.getArmorSlots()) {
                 if (!stack.isEmpty() && stack.isDamaged()) {
-                    stack.setDamage(stack.getDamage() - 1);
+                    stack.setDamageValue(stack.getDamageValue() - 1);
                     break;
                 }
             }

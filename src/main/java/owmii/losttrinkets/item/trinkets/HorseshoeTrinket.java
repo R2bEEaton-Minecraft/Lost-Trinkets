@@ -1,7 +1,7 @@
 package owmii.losttrinkets.item.trinkets;
 
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import owmii.losttrinkets.api.trinket.ITickableTrinket;
 import owmii.losttrinkets.api.trinket.Rarity;
@@ -13,13 +13,13 @@ public class HorseshoeTrinket extends Trinket<HorseshoeTrinket> implements ITick
     }
 
     @Override
-    public void tick(World world, BlockPos pos, PlayerEntity player) {
-        player.stepHeight = player.isSneaking() ? 0.6F : 1.0F;
+    public void tick(Level world, BlockPos pos, Player player) {
+        player.setMaxUpStep(player.isShiftKeyDown() ? 0.6F : 1.0F);
     }
 
     @Override
-    public void onDeactivated(World world, BlockPos pos, PlayerEntity player) {
+    public void onDeactivated(Level world, BlockPos pos, Player player) {
         super.onDeactivated(world, pos, player);
-        player.stepHeight = 0.6F;
+        player.setMaxUpStep(0.6F);
     }
 }

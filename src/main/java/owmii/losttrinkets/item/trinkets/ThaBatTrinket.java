@@ -1,10 +1,10 @@
 package owmii.losttrinkets.item.trinkets;
 
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import owmii.losttrinkets.api.trinket.ITickableTrinket;
 import owmii.losttrinkets.api.trinket.Rarity;
 import owmii.losttrinkets.api.trinket.Trinket;
@@ -15,9 +15,9 @@ public class ThaBatTrinket extends Trinket<ThaBatTrinket> implements ITickableTr
     }
 
     @Override
-    public void tick(World world, BlockPos pos, PlayerEntity player) {
-        if (!world.isRemote && player.ticksExisted % 90 == 0) {
-            player.addPotionEffect(new EffectInstance(Effects.NIGHT_VISION, 500, 0, false, false));
+    public void tick(Level world, BlockPos pos, Player player) {
+        if (!world.isClientSide && player.tickCount % 90 == 0) {
+            player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 500, 0, false, false));
         }
     }
 }

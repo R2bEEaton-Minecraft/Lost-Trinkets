@@ -1,8 +1,8 @@
 package owmii.losttrinkets.item.trinkets;
 
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobEntity;
-import net.minecraft.world.entity.ai.brain.memory.MemoryModuleType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import owmii.losttrinkets.api.LostTrinketsAPI;
@@ -17,19 +17,17 @@ public class FireMindTrinket extends Trinket<FireMindTrinket> {
         super(rarity, properties);
     }
 
-    public static void onLivingUpdate(LivingEvent.LivingUpdateEvent event) {
-        LivingEntity entity = event.getEntityLiving();
-        if (entity instanceof MobEntity) {
-            MobEntity mob = (MobEntity) entity;
-            LivingEntity target = mob.getAttackTarget();
+    public static void onLivingUpdate(LivingEvent.LivingTickEvent event) {
+        LivingEntity entity = event.getEntity();
+        if (entity instanceof Mob mob) {
+            LivingEntity target = mob.getTarget();
             if (target == null) {
                 target = TargetHandler.getBrainMemorySafe(mob.getBrain(), MemoryModuleType.ATTACK_TARGET).orElse(null);
             }
-            if (target instanceof PlayerEntity) {
-                PlayerEntity player = (PlayerEntity) target;
+            if (target instanceof Player player) {
                 Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
                 if (trinkets.isActive(Itms.FIRE_MIND) && !mob.isImmuneToFire()) {
-                    mob.setFire(3);
+                    mob.setSecondsOnFire(3);
                 }
             }
         }

@@ -1,9 +1,9 @@
 package owmii.losttrinkets.item.trinkets;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import owmii.losttrinkets.api.trinket.ITickableTrinket;
 import owmii.losttrinkets.api.trinket.Rarity;
@@ -15,9 +15,9 @@ public class LuckCoinTrinket extends Trinket<LuckCoinTrinket> implements ITickab
     }
 
     @Override
-    public void tick(World world, BlockPos pos, PlayerEntity player) {
-        if (!world.isRemote && player.ticksExisted % 90 == 0) {
-            player.addPotionEffect(new EffectInstance(Effects.LUCK, 300, 1, false, false));
+    public void tick(Level world, BlockPos pos, Player player) {
+        if (!world.isClientSide && player.tickCount % 90 == 0) {
+            player.addEffect(new MobEffectInstance(MobEffects.LUCK, 300, 1, false, false));
         }
     }
 }

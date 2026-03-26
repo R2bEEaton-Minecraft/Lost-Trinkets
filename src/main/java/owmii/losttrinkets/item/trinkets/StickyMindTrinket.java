@@ -3,7 +3,7 @@ package owmii.losttrinkets.item.trinkets;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.event.entity.living.EnderTeleportEvent;
+import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import owmii.losttrinkets.api.LostTrinketsAPI;
@@ -20,11 +20,11 @@ public class StickyMindTrinket extends Trinket<StickyMindTrinket> {
     }
 
     @SubscribeEvent
-    public static void onEnderTeleport(EnderTeleportEvent event) {
-        LivingEntity entity = event.getEntityLiving();
-        AxisAlignedBB bb = new AxisAlignedBB(entity.getPosition()).grow(16);
-        List<PlayerEntity> players = entity.world.getEntitiesWithinAABB(PlayerEntity.class, bb);
-        for (PlayerEntity player : players) {
+    public static void onEnderTeleport(EntityTeleportEvent.EnderEntity event) {
+        LivingEntity entity = event.getEntity();
+        AABB bb = new AABB(entity.blockPosition()).inflate(16.0D);
+        List<Player> players = entity.level().getEntitiesOfClass(Player.class, bb);
+        for (Player player : players) {
             if (LostTrinketsAPI.getTrinkets(player).isActive(Itms.STICKY_MIND)) {
                 event.setCanceled(true);
                 break;

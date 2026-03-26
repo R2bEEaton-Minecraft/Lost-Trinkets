@@ -1,14 +1,14 @@
 package owmii.losttrinkets.item.trinkets;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.EffectType;
-import net.minecraft.potion.Effects;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.living.PotionEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.eventbus.api.Event;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.trinket.Rarity;
@@ -16,21 +16,18 @@ import owmii.losttrinkets.api.trinket.Trinket;
 import owmii.losttrinkets.api.trinket.Trinkets;
 import owmii.losttrinkets.item.Itms;
 
-import java.util.Iterator;
-
 public class MagicalHerbsTrinket extends Trinket<MagicalHerbsTrinket> {
     public MagicalHerbsTrinket(Rarity rarity, Properties properties) {
         super(rarity, properties);
     }
 
-    public static void onPotion(PotionEvent.PotionApplicableEvent event) {
-        LivingEntity entity = event.getEntityLiving();
-        if (entity instanceof PlayerEntity) {
-            Trinkets trinkets = LostTrinketsAPI.getTrinkets((PlayerEntity) entity);
+    public static void onPotion(MobEffectEvent.Applicable event) {
+        LivingEntity entity = event.getEntity();
+        if (entity instanceof Player player) {
+            Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
             if (trinkets.isActive(Itms.MAGICAL_HERBS)) {
-                Effect effect = event.getPotionEffect().getPotion();
-                if (effect.getEffectType().equals(EffectType.HARMFUL) ||
-                        effect.equals(Effects.BAD_OMEN)) {
+                MobEffect effect = event.getEffectInstance().getEffect();
+                if (effect.getCategory() == MobEffectCategory.HARMFUL || effect.equals(MobEffects.BAD_OMEN)) {
                     event.setResult(Event.Result.DENY);
                 }
             }
@@ -38,15 +35,13 @@ public class MagicalHerbsTrinket extends Trinket<MagicalHerbsTrinket> {
     }
 
     @Override
-    public void onActivated(World world, BlockPos pos, PlayerEntity player) {
-        if (world.isRemote) return;
-        Iterator<EffectInstance> iterator = player.getActivePotionMap().values().iterator();
-        while (iterator.hasNext()) {
-            EffectInstance effect = iterator.next();
-            if (effect.getPotion().getEffectType().equals(EffectType.HARMFUL) ||
-                    effect.getPotion().equals(Effects.BAD_OMEN)) {
-                player.onFinishedPotionEffect(effect);
-                iterator.remove();
+    public void onActivated(Level world, BlockPos pos, Player player) {
+        if (world.isClientSide) {
+            return;
+        }
+        for (MobEffectInstance effect : player.getActiveEffects().stream().toList()) {
+            if (effect.getEffect().getCategory() == MobEffectCategory.HARMFUL || effect.getEffect().equals(MobEffects.BAD_OMEN)) {
+                player.removeEffect(effect.getEffect());
             }
         }
     }

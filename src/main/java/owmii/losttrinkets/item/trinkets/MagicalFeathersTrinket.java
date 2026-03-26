@@ -1,7 +1,8 @@
 package owmii.losttrinkets.item.trinkets;
 
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import owmii.losttrinkets.LostTrinkets;
 import owmii.losttrinkets.api.LostTrinketsAPI;
@@ -17,30 +18,32 @@ public class MagicalFeathersTrinket extends Trinket<MagicalFeathersTrinket> impl
     }
 
     @Override
-    public void tick(World world, BlockPos pos, PlayerEntity player) {
+    public void tick(Level world, BlockPos pos, Player player) {
         PlayerData data = LostTrinketsAPI.getData(player);
-        player.abilities.allowFlying = true;
+        player.getAbilities().mayfly = true;
         if (data.wasFlying) {
-            player.abilities.isFlying = true;
+            player.getAbilities().flying = true;
             data.wasFlying = false;
+            player.onUpdateAbilities();
         }
         if (!data.allowFlying) {
-            if (!world.isRemote) {
-                LostTrinkets.NET.toClient(new SyncFlyPacket(true), player);
+            if (!world.isClientSide && player instanceof ServerPlayer serverPlayer) {
+                LostTrinkets.NET.toClient(new SyncFlyPacket(true), serverPlayer);
             }
             data.allowFlying = true;
         }
     }
 
     @Override
-    public void onDeactivated(World world, BlockPos pos, PlayerEntity player) {
+    public void onDeactivated(Level world, BlockPos pos, Player player) {
         super.onDeactivated(world, pos, player);
         PlayerData data = LostTrinketsAPI.getData(player);
         if (data.allowFlying) {
-            player.abilities.allowFlying = false;
-            player.abilities.isFlying = false;
-            if (!world.isRemote) {
-                LostTrinkets.NET.toClient(new SyncFlyPacket(false), player);
+            player.getAbilities().mayfly = false;
+            player.getAbilities().flying = false;
+            player.onUpdateAbilities();
+            if (!world.isClientSide && player instanceof ServerPlayer serverPlayer) {
+                LostTrinkets.NET.toClient(new SyncFlyPacket(false), serverPlayer);
             }
             data.allowFlying = false;
         }
