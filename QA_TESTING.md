@@ -1,0 +1,33 @@
+- Piggy trinket doesn't allow me to control the pig when I'm riding a saddled pig.
+- Magneto doesn't seem to work.
+- Tha Cloud seems to crash my game when I am about to land on the ground. But it only happened once and when I restarted it worked fine.
+- Empty Amulet doesn't seem to work. I throw a pearl and it just disappears when I throw it and when it lands I don't get one back. Not sure if this is implemented properly or at all.
+- Tha Spider doesn't seem to work.
+- Glass Shard doesn't seem to work.
+- Tha Ghost doesn't seem to work, mobs still target me when invisible and I have held items / armor.
+- Blank Eyes doesn't work, I looked at it and it attacked me.
+- What is Tha Wizard supopsed supposed to do? They don't attack me at least. Is it supposed to do more?
+- Book O'Enchanting doesn't seem to work.
+- Serpent Tooth doesn't seem to work.
+- Dragon Breath doesn't seem to work.
+- Karma doesn't seem to give me a discount on Villager trades, or at least I can't tell.
+- Starfish doesn't seem to work.
+- Dark Egg, the dark vex attack me instead of my enemies.
+- Tha Spirit doesn't seem to work.
+- Octopick doesn't seem to drop XP for the other ores mined like coal.
+
+- Piggy still doesn't work.
+- Magneto still doesn't work.
+- Blank Eyes still doesn't work.
+- Book O'Enchanting, I want it to provide a 15 bookshelf level enchant even if there are no bookshelves.
+- Dragon's Breath still doesn't work. I broke an iron ore and it gave me raw iron.
+- Karma I don't see any noticeable discount. It should do the cross out thing like when you have hero of the vilalge.
+
+- Piggy works but the movement is super slow. It should be faster than walking.
+- Magneto seems to be working but it should only be when activated by the hotkey or right click with an empty hand.
+- Blank eyes still doesn't work.
+- Book O'Enchanting doesn't work. I should be able to do a level 30 enchantment on a table with nothing around it.
+- Karma I still don't see a discount.
+
+- Piggy still way too slow.
+- Book O'Enchanting still doesn't work.
