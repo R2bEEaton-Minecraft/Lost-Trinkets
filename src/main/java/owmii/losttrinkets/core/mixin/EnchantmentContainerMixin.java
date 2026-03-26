@@ -81,6 +81,16 @@ public abstract class EnchantmentContainerMixin {
                     }
                 }
 
+                if (this.costs[0] > 0) {
+                    this.costs[0] = Math.max(this.costs[0], 10);
+                }
+                if (this.costs[1] > 0) {
+                    this.costs[1] = Math.max(this.costs[1], 20);
+                }
+                if (this.costs[2] > 0) {
+                    this.costs[2] = 30;
+                }
+
                 for (int i = 0; i < 3; ++i) {
                     if (this.costs[i] > 0) {
                         List<EnchantmentInstance> list = this.getEnchantmentList(stack, i, this.costs[i]);
