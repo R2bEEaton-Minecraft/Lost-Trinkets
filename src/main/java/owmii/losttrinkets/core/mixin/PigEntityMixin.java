@@ -31,7 +31,7 @@ public abstract class PigEntityMixin {
     @Inject(method = "getRiddenSpeed", at = @At("HEAD"), cancellable = true)
     private void getRiddenSpeed(Player player, CallbackInfoReturnable<Float> cir) {
         if (LostTrinketsAPI.getTrinkets(player).isActive(Itms.PIGGY) && (Object) this instanceof Pig pig) {
-            cir.setReturnValue((float) pig.getAttributeValue(Attributes.MOVEMENT_SPEED) * 3.5F);
+            cir.setReturnValue((float) pig.getAttributeValue(Attributes.MOVEMENT_SPEED) * 1.5F);
         }
     }
 }

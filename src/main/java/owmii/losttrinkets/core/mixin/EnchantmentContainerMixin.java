@@ -51,9 +51,6 @@ public abstract class EnchantmentContainerMixin {
     @Shadow
     private Container enchantSlots;
 
-    @Shadow
-    private ContainerLevelAccess access;
-
     @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V", at = @At("RETURN"))
     private void enchantmentContainer(int id, Inventory inventory, ContainerLevelAccess access, CallbackInfo ci) {
         this.player = inventory.player;
@@ -70,40 +67,27 @@ public abstract class EnchantmentContainerMixin {
         }
         ItemStack stack = container.getItem(0);
         if (!stack.isEmpty() && stack.isEnchantable()) {
-            this.access.execute((level, pos) -> {
-                this.random.setSeed((long) this.enchantmentSeed.get());
-                for (int i = 0; i < 3; ++i) {
-                    this.costs[i] = EnchantmentHelper.getEnchantmentCost(this.random, i, 15, stack);
-                    this.enchantClue[i] = -1;
-                    this.levelClue[i] = -1;
-                    if (this.costs[i] < i + 1) {
-                        this.costs[i] = 0;
-                    }
-                }
+            this.random.setSeed((long) this.enchantmentSeed.get());
+            this.costs[0] = 10;
+            this.costs[1] = 20;
+            this.costs[2] = 30;
+            this.enchantClue[0] = -1;
+            this.enchantClue[1] = -1;
+            this.enchantClue[2] = -1;
+            this.levelClue[0] = -1;
+            this.levelClue[1] = -1;
+            this.levelClue[2] = -1;
 
-                if (this.costs[0] > 0) {
-                    this.costs[0] = Math.max(this.costs[0], 10);
+            for (int i = 0; i < 3; ++i) {
+                List<EnchantmentInstance> list = this.getEnchantmentList(stack, i, this.costs[i]);
+                if (!list.isEmpty()) {
+                    EnchantmentInstance enchantment = list.get(this.random.nextInt(list.size()));
+                    this.enchantClue[i] = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getId(enchantment.enchantment);
+                    this.levelClue[i] = enchantment.level;
                 }
-                if (this.costs[1] > 0) {
-                    this.costs[1] = Math.max(this.costs[1], 20);
-                }
-                if (this.costs[2] > 0) {
-                    this.costs[2] = 30;
-                }
+            }
 
-                for (int i = 0; i < 3; ++i) {
-                    if (this.costs[i] > 0) {
-                        List<EnchantmentInstance> list = this.getEnchantmentList(stack, i, this.costs[i]);
-                        if (!list.isEmpty()) {
-                            EnchantmentInstance enchantment = list.get(this.random.nextInt(list.size()));
-                            this.enchantClue[i] = net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getId(enchantment.enchantment);
-                            this.levelClue[i] = enchantment.level;
-                        }
-                    }
-                }
-
-                ((AbstractContainerMenu) (Object) this).broadcastChanges();
-            });
+            ((AbstractContainerMenu) (Object) this).broadcastChanges();
         } else {
             for (int i = 0; i < 3; ++i) {
                 this.costs[i] = 0;
