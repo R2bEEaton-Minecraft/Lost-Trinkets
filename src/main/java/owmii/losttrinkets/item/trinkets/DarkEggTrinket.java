@@ -37,7 +37,7 @@ public class DarkEggTrinket extends Trinket<DarkEggTrinket> {
                     int entities = world.getEntitiesOfClass(DarkVexEntity.class, new AABB(player.blockPosition()).inflate(16.0D)).size();
                     if (entities < 6 && world instanceof ServerLevel serverLevel) {
                         for (int i = 0; i < 3; i++) {
-                            DarkVexEntity vex = Entities.DARK_VEX.create(world);
+                            DarkVexEntity vex = Entities.DARK_VEX.get().create(world);
                             if (vex != null) {
                                 vex.finalizeSpawn(serverLevel, world.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, null);
                                 vex.setTarget(living);

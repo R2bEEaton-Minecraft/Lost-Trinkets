@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.ForgeRegistries;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.player.PlayerData;
@@ -135,6 +136,10 @@ public class Trinkets implements INBTSerializable<CompoundTag> {
         return false;
     }
 
+    public boolean give(RegistryObject<? extends ITrinket> trinket) {
+        return give(trinket.get());
+    }
+
     public boolean setActive(ITrinket trinket, Player player) {
         if (isAvailable(trinket)) {
             forceActive(trinket, player);
@@ -142,6 +147,10 @@ public class Trinkets implements INBTSerializable<CompoundTag> {
             return true;
         }
         return false;
+    }
+
+    public boolean setActive(RegistryObject<? extends ITrinket> trinket, Player player) {
+        return setActive(trinket.get(), player);
     }
 
     public boolean setInactive(ITrinket trinket, Player player) {
@@ -164,6 +173,10 @@ public class Trinkets implements INBTSerializable<CompoundTag> {
         return false;
     }
 
+    public boolean setInactive(RegistryObject<? extends ITrinket> trinket, Player player) {
+        return setInactive(trinket.get(), player);
+    }
+
     public boolean forceActive(ITrinket trinket, Player player) {
         if (!isActive(trinket) && this.active.size() < this.slots) {
             this.active.add(trinket);
@@ -183,6 +196,10 @@ public class Trinkets implements INBTSerializable<CompoundTag> {
         return false;
     }
 
+    public boolean forceActive(RegistryObject<? extends ITrinket> trinket, Player player) {
+        return forceActive(trinket.get(), player);
+    }
+
     public void removeDisabled(Player player) {
         getActiveTrinkets().stream().filter(LostTrinketsAPI.get()::isDisabled).collect(Collectors.toList())
                 .forEach(trinket -> setInactive(trinket, player));
@@ -195,12 +212,24 @@ public class Trinkets implements INBTSerializable<CompoundTag> {
         return isActive(trinket) || isAvailable(trinket);
     }
 
+    public boolean has(RegistryObject<? extends ITrinket> trinket) {
+        return has(trinket.get());
+    }
+
     public boolean isActive(ITrinket trinket) {
         return this.active.contains(trinket);
     }
 
+    public boolean isActive(RegistryObject<? extends ITrinket> trinket) {
+        return isActive(trinket.get());
+    }
+
     public boolean isAvailable(ITrinket trinket) {
         return this.available.contains(trinket);
+    }
+
+    public boolean isAvailable(RegistryObject<? extends ITrinket> trinket) {
+        return isAvailable(trinket.get());
     }
 
     public List<ITrinket> getActiveTrinkets() {

@@ -16,7 +16,7 @@ public final class ItemGroups {
     public static final RegistryObject<CreativeModeTab> MAIN = REG.register(LostTrinkets.MOD_ID, () ->
             CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup." + LostTrinkets.MOD_ID))
-                    .icon(() -> new ItemStack(Itms.CREEPO))
+                    .icon(() -> new ItemStack(Itms.CREEPO.get()))
                     .displayItems((parameters, output) -> Itms.REG.forEach(output::accept))
                     .build());
 

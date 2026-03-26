@@ -15,6 +15,6 @@ public class EntityRenderer {
 
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(Entities.DARK_VEX, DarkVexRenderer::new);
+        event.registerEntityRenderer(Entities.DARK_VEX.get(), DarkVexRenderer::new);
     }
 }

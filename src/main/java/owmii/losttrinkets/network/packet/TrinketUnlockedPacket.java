@@ -42,7 +42,7 @@ public class TrinketUnlockedPacket implements IPacket<TrinketUnlockedPacket> {
                 Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(msg.key));
                 if (item instanceof ITrinket) {
                     HudHandler.add(new Toast((ITrinket) item));
-                    player.playSound(Sounds.UNLOCK, 1.0F, 1.0F);
+                    player.playSound(Sounds.UNLOCK.get(), 1.0F, 1.0F);
                 }
             });
         });
