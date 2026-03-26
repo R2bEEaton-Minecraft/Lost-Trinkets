@@ -17,7 +17,7 @@ public class SerpentToothTrinket extends Trinket<SerpentToothTrinket> {
     }
 
     public static void onHurt(LivingHurtEvent event) {
-        Entity entity = event.getSource().getDirectEntity();
+        Entity entity = event.getSource().getEntity();
         if (entity instanceof Player player) {
             Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
             if (trinkets.isActive(Itms.SERPENT_TOOTH)) {

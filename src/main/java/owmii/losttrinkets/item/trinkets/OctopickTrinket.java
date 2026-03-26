@@ -11,6 +11,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.Tags;
@@ -73,6 +75,14 @@ public class OctopickTrinket extends Trinket<OctopickTrinket> {
                     toBreak.forEach(breakPos -> {
                         BlockState breakState = world.getBlockState(breakPos);
                         if (!breakState.requiresCorrectToolForDrops() || player.hasCorrectToolForDrops(breakState)) {
+                            if (!breakPos.equals(pos)) {
+                                int silkTouch = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem());
+                                int fortune = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, player.getMainHandItem());
+                                int xp = breakState.getExpDrop(world, world.random, breakPos, fortune, silkTouch);
+                                if (xp > 0) {
+                                    breakState.getBlock().popExperience(world, breakPos, xp);
+                                }
+                            }
                             if (player.gameMode.destroyBlock(breakPos)) {
                                 world.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, breakPos, Block.getId(breakState));
                             }

@@ -16,8 +16,8 @@ public class ThaSpiritTrinket extends Trinket<ThaSpiritTrinket> implements ITick
 
     @Override
     public void tick(Level world, BlockPos pos, Player player) {
-        if (!world.isClientSide && player.getHealth() <= 2.0F && player.tickCount % 90 == 0) {
-            player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 300, 1, false, false));
+        if (!world.isClientSide && player.getHealth() <= 2.0F) {
+            player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 40, 0, false, false));
         }
     }
 }

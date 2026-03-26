@@ -13,6 +13,6 @@ public class ThaGhostTrinket extends Trinket<ThaGhostTrinket> implements ITarget
     }
 
     public boolean preventTargeting(Mob mob, Player player, boolean notAttacked) {
-        return notAttacked && player.hasEffect(MobEffects.INVISIBILITY);
+        return player.hasEffect(MobEffects.INVISIBILITY);
     }
 }

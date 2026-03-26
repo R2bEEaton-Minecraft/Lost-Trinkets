@@ -10,6 +10,7 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.EnchantmentMenu;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -76,6 +77,7 @@ public abstract class EnchantmentContainerMixin {
                             }
                         }
                     }
+                    ((AbstractContainerMenu) (Object) this).broadcastChanges();
                 }
             }
         }

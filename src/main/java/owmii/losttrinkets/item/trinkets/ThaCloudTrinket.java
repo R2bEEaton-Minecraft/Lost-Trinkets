@@ -17,14 +17,14 @@ public class ThaCloudTrinket extends Trinket<ThaCloudTrinket> implements ITickab
 
     @Override
     public void tick(Level world, BlockPos pos, Player player) {
-        if (player.fallDistance > 3.0F) {
-            if (!world.isEmptyBlock(player.blockPosition().below(3))) {
+        if (player.fallDistance > 3.0F && !world.isEmptyBlock(player.blockPosition().below(3))) {
+            if (!world.isClientSide) {
                 Vec3 v3d = player.getDeltaMovement();
                 player.setDeltaMovement(v3d.x, 0.0D, v3d.z);
-                if (world.isClientSide) {
-                    for (V3d v3d1 : V3d.from(player.position()).circled(8, 0.3D)) {
-                        world.addParticle(ParticleTypes.CLOUD, v3d1.x, v3d1.y, v3d1.z, 0.0D, 0.0D, 0.0D);
-                    }
+                player.hurtMarked = true;
+            } else {
+                for (V3d v3d1 : V3d.from(player.position()).circled(8, 0.3D)) {
+                    world.addParticle(ParticleTypes.CLOUD, v3d1.x, v3d1.y, v3d1.z, 0.0D, 0.0D, 0.0D);
                 }
             }
             player.fallDistance = 0.0F;

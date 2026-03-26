@@ -21,7 +21,7 @@ public abstract class PigEntityMixin {
             Entity passenger = pig.getFirstPassenger();
             if (passenger instanceof Player player) {
                 boolean hasCarrot = player.getMainHandItem().is(Items.CARROT_ON_A_STICK) || player.getOffhandItem().is(Items.CARROT_ON_A_STICK);
-                if (!hasCarrot && LostTrinketsAPI.getTrinkets(player).isActive(Itms.PIGGY) && player.zza > 0.0F) {
+                if (!hasCarrot && LostTrinketsAPI.getTrinkets(player).isActive(Itms.PIGGY)) {
                     cir.setReturnValue(player);
                 }
             }

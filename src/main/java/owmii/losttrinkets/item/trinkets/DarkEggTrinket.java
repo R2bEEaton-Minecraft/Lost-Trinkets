@@ -42,6 +42,7 @@ public class DarkEggTrinket extends Trinket<DarkEggTrinket> {
                                 vex.finalizeSpawn(serverLevel, world.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, null);
                                 vex.setTarget(living);
                                 vex.setOwner(player);
+                                vex.setLastHurtByMob(null);
                                 vex.setBoundOrigin(BlockPos.containing(player.position()));
                                 vex.moveTo(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
                                 world.addFreshEntity(vex);

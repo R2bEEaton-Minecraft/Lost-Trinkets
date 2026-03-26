@@ -12,7 +12,7 @@ import owmii.losttrinkets.item.trinkets.*;
 
 public class Itms {
     public static final Registry<Item> REG = new Registry<>(Item.class, Blcks.REG.getBlockItems(null), LostTrinkets.MOD_ID);
-    public static final RegistryObject<Trinket> PIGGY = trinket("piggy", () -> new Trinket(Rarity.COMMON, props()));
+    public static final RegistryObject<Trinket> PIGGY = trinket("piggy", () -> new PiggyTrinket(Rarity.COMMON, props()));
     public static final RegistryObject<Trinket> CREEPO = trinket("creepo", () -> new CreepoTrinket(Rarity.COMMON, props()));
     public static final RegistryObject<Trinket> HORSESHOE = trinket("horseshoe", () -> new HorseshoeTrinket(Rarity.COMMON, props()));
     public static final RegistryObject<Trinket> BUTCHERS_CLEAVER = trinket("butchers_cleaver", () -> new ButchersCleaverTrinket(Rarity.COMMON, props()));
@@ -27,7 +27,7 @@ public class Itms {
     public static final RegistryObject<Trinket> TURTLE_SHELL = trinket("turtle_shell", () -> new TurtleShellTrinket(Rarity.UNCOMMON, props()));
     public static final RegistryObject<Trinket> ICE_SHARD = trinket("ice_shard", () -> new IceShardTrinket(Rarity.UNCOMMON, props()));
 
-    public static final RegistryObject<Trinket> EMPTY_AMULET = trinket("empty_amulet", () -> new Trinket(Rarity.RARE, props()));
+    public static final RegistryObject<Trinket> EMPTY_AMULET = trinket("empty_amulet", () -> new EmptyAmuletTrinket(Rarity.RARE, props()));
     public static final RegistryObject<Trinket> THA_SPIDER = trinket("tha_spider", () -> new Trinket(Rarity.RARE, props()));
     public static final RegistryObject<Trinket> GLASS_SHARD = trinket("glass_shard", () -> new Trinket(Rarity.RARE, props()));
     public static final RegistryObject<Trinket> BLAZE_HEART = trinket("blaze_heart", () -> new BlazeHeartTrinket(Rarity.RARE, props()));

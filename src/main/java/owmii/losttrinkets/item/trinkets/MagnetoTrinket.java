@@ -1,5 +1,7 @@
 package owmii.losttrinkets.item.trinkets;
 
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
@@ -7,10 +9,12 @@ import net.minecraft.Util;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import owmii.lib.util.Magnet;
 import owmii.losttrinkets.LostTrinkets;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.trinket.Rarity;
@@ -33,6 +37,23 @@ public class MagnetoTrinket extends Trinket<MagnetoTrinket> {
         if (trinkets.isActive(Itms.MAGNETO)) {
             LostTrinkets.NET.toServer(new MagnetoPacket());
         }
+    }
+
+    public static void collectNearby(Player player) {
+        AABB box = player.getBoundingBox().inflate(10.0D);
+        player.level().getEntitiesOfClass(ItemEntity.class, box).stream()
+                .filter(Magnet::canCollectManual)
+                .forEach(item -> {
+                    item.setNoPickUpDelay();
+                    item.moveTo(player.getX(), player.getY(), player.getZ());
+                    item.playerTouch(player);
+                });
+        player.level().getEntitiesOfClass(ExperienceOrb.class, box).stream()
+                .filter(Magnet::canCollectManual)
+                .forEach(orb -> {
+                    orb.moveTo(player.getX(), player.getY(), player.getZ());
+                    orb.playerTouch(player);
+                });
     }
 
     @SubscribeEvent

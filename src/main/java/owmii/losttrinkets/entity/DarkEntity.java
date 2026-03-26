@@ -37,6 +37,9 @@ public abstract class DarkEntity extends Vex {
                 vanish();
                 return;
             }
+            if (getTarget() == this.player) {
+                setTarget(null);
+            }
             if (getTarget() == null || !getTarget().isAlive()) {
                 List<Mob> entities = level().getEntitiesOfClass(Mob.class, getBoundingBox().inflate(24.0D));
                 boolean found = false;
@@ -56,6 +59,17 @@ public abstract class DarkEntity extends Vex {
 
     protected void vanish() {
         discard();
+    }
+
+    @Override
+    public boolean isAlliedTo(net.minecraft.world.entity.Entity entity) {
+        if (entity == this.player) {
+            return true;
+        }
+        if (entity instanceof DarkEntity dark && this.owner != null && this.owner.equals(dark.owner)) {
+            return true;
+        }
+        return super.isAlliedTo(entity);
     }
 
     @Override

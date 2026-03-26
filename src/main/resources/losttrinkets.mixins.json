@@ -17,6 +17,7 @@
 	"PigEntityMixin"
   ],
   "client": [
+    "client.EnderManMixin",
     "client.EntityMixin"
   ],
   "server": [],

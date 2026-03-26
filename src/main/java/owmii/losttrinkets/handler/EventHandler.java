@@ -36,6 +36,7 @@ import owmii.losttrinkets.item.trinkets.DarkEggTrinket;
 import owmii.losttrinkets.item.trinkets.DropSpindleTrinket;
 import owmii.losttrinkets.item.trinkets.EmberTrinket;
 import owmii.losttrinkets.item.trinkets.FireMindTrinket;
+import owmii.losttrinkets.item.trinkets.GlassShardTrinket;
 import owmii.losttrinkets.item.trinkets.GoldenMelonTrinket;
 import owmii.losttrinkets.item.trinkets.GoldenSkullTrinket;
 import owmii.losttrinkets.item.trinkets.GoldenSwatterTrinket;
@@ -54,6 +55,7 @@ import owmii.losttrinkets.item.trinkets.SerpentToothTrinket;
 import owmii.losttrinkets.item.trinkets.SlingshotTrinket;
 import owmii.losttrinkets.item.trinkets.StarfishTrinket;
 import owmii.losttrinkets.item.trinkets.TeaLeafTrinket;
+import owmii.losttrinkets.item.trinkets.ThaSpiderTrinket;
 import owmii.losttrinkets.item.trinkets.TreasureRingTrinket;
 import owmii.losttrinkets.item.trinkets.WitherNailTrinket;
 
@@ -71,6 +73,8 @@ public class EventHandler {
             Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
             BlockPos pos = player.blockPosition();
             trinkets.getTickable().forEach(trinket -> trinket.tick(player.level(), pos, player));
+            GlassShardTrinket.tick(player);
+            ThaSpiderTrinket.tick(player);
         }
     }
 

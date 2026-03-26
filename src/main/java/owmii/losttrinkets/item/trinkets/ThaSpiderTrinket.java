@@ -22,4 +22,18 @@ public class ThaSpiderTrinket extends Trinket<ThaSpiderTrinket> {
         }
         return false;
     }
+
+    public static void tick(Player player) {
+        if (!doClimb(player)) {
+            return;
+        }
+        player.resetFallDistance();
+        if (player.zza > 0.0F) {
+            player.setDeltaMovement(player.getDeltaMovement().x, 0.2D, player.getDeltaMovement().z);
+        } else if (player.isShiftKeyDown()) {
+            player.setDeltaMovement(player.getDeltaMovement().x, -0.15D, player.getDeltaMovement().z);
+        } else if (player.getDeltaMovement().y < 0.0D) {
+            player.setDeltaMovement(player.getDeltaMovement().x, 0.0D, player.getDeltaMovement().z);
+        }
+    }
 }
