@@ -1,11 +1,11 @@
 package owmii.losttrinkets.item.trinkets;
 
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.ServerPlayerEntity;
-import net.minecraft.stats.ServerStatisticsManager;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.stats.Stats;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import owmii.losttrinkets.api.trinket.ITickableTrinket;
 import owmii.losttrinkets.api.trinket.Rarity;
@@ -17,12 +17,12 @@ public class PillowOfSecretsTrinket extends Trinket<PillowOfSecretsTrinket> impl
     }
 
     @Override
-    public void tick(World world, BlockPos pos, PlayerEntity player) {
-        if (player instanceof ServerPlayerEntity) {
-            ServerStatisticsManager stats = ((ServerPlayerEntity) player).getStats();
-            int j = MathHelper.clamp(stats.getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST)), 1, Integer.MAX_VALUE);
+    public void tick(Level world, BlockPos pos, Player player) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            ServerStatsCounter stats = serverPlayer.getStats();
+            int j = Mth.clamp(stats.getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST)), 1, Integer.MAX_VALUE);
             if (j > 12000) {
-                player.takeStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
+                serverPlayer.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
             }
         }
     }

@@ -1,10 +1,10 @@
 package owmii.losttrinkets.item.trinkets;
 
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Food;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import owmii.losttrinkets.api.LostTrinketsAPI;
@@ -19,16 +19,15 @@ public class LunchBagTrinket extends Trinket<LunchBagTrinket> {
     }
 
     public static void onUseFinish(LivingEntityUseItemEvent.Finish event) {
-        LivingEntity entity = event.getEntityLiving();
-        World world = entity.getEntityWorld();
-        if (entity instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) entity;
+        LivingEntity entity = event.getEntity();
+        Level world = entity.level();
+        if (entity instanceof Player player) {
             Trinkets trinkets = LostTrinketsAPI.getTrinkets(player);
-            if (event.getItem().isFood()) {
-                Food food = event.getItem().getItem().getFood();
+            if (event.getItem().isEdible()) {
+                FoodProperties food = event.getItem().getFoodProperties(entity);
                 if (food != null && food.getEffects().isEmpty()) {
-                    if (trinkets.isActive(Itms.LUNCH_BAG) && world.rand.nextInt(10) == 0) {
-                        player.addPotionEffect(new EffectInstance(Effects.SATURATION, world.rand.nextInt(200) + 100, 1, false, false));
+                    if (trinkets.isActive(Itms.LUNCH_BAG) && world.random.nextInt(10) == 0) {
+                        player.addEffect(new MobEffectInstance(MobEffects.SATURATION, world.random.nextInt(200) + 100, 1, false, false));
                     }
                 }
             }
