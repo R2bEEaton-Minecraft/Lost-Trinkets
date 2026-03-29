@@ -1,8 +1,9 @@
 package owmii.losttrinkets.network.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
-import owmii.lib.client.util.MC;
 import owmii.lib.network.IPacket;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.player.PlayerData;
@@ -33,7 +34,17 @@ public class SyncFlyPacket implements IPacket<SyncFlyPacket> {
     @Override
     public void handle(SyncFlyPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            MC.player().ifPresent(player -> {
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientOnly.handle(msg));
+        });
+        ctx.get().setPacketHandled(true);
+    }
+
+    private static final class ClientOnly {
+        private ClientOnly() {
+        }
+
+        private static void handle(SyncFlyPacket msg) {
+            owmii.lib.client.util.MC.player().ifPresent(player -> {
                 PlayerData data = LostTrinketsAPI.getData(player);
                 data.allowFlying = msg.fly;
                 player.getAbilities().mayfly = msg.fly || player.getAbilities().instabuild;
@@ -42,7 +53,6 @@ public class SyncFlyPacket implements IPacket<SyncFlyPacket> {
                 }
                 player.onUpdateAbilities();
             });
-        });
-        ctx.get().setPacketHandled(true);
+        }
     }
 }

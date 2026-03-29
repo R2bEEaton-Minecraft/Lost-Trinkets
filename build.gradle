@@ -10,6 +10,8 @@ mixin {
     add sourceSets.main, "${mod_id}.refmap.json"
 }
 
+evaluationDependsOn(':_Lollipop')
+
 final def lib = project(':_Lollipop')
 
 version = "${minecraft_version}-${mod_version}"
@@ -37,7 +39,7 @@ minecraft {
                     source sourceSets.main
                 }
                 lollipop {
-                    source lib.sourceSets.main
+                    source project(':_Lollipop').sourceSets.main
                 }
             }
         }
@@ -68,7 +70,7 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    implementation lib
+    compileOnly lib
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
@@ -112,6 +114,12 @@ tasks.register('verifyMixinRefmap') {
 
 tasks.named('jar').configure {
     dependsOn tasks.named('verifyMixinRefmap')
+}
+
+afterEvaluate {
+    tasks.named('jar').configure {
+        finalizedBy 'reobfJar'
+    }
 }
 
 jar {

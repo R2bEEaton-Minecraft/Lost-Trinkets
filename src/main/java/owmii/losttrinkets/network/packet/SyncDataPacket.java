@@ -3,12 +3,12 @@ package owmii.losttrinkets.network.packet;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
-import owmii.lib.client.util.MC;
 import owmii.lib.network.IPacket;
 import owmii.losttrinkets.api.LostTrinketsAPI;
 import owmii.losttrinkets.api.player.PlayerData;
-import owmii.losttrinkets.client.screen.Screens;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -48,15 +48,24 @@ public class SyncDataPacket implements IPacket<SyncDataPacket> {
     @Override
     public void handle(SyncDataPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            MC.world().ifPresent(world -> {
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientOnly.handle(msg));
+        });
+        ctx.get().setPacketHandled(true);
+    }
+
+    private static final class ClientOnly {
+        private ClientOnly() {
+        }
+
+        private static void handle(SyncDataPacket msg) {
+            owmii.lib.client.util.MC.world().ifPresent(world -> {
                 Player player = world.getPlayerByUUID(msg.uuid);
                 if (player != null) {
                     PlayerData data = LostTrinketsAPI.getData(player);
                     data.deserializeNBT(msg.nbt);
-                    Screens.checkScreenRefresh();
+                    owmii.losttrinkets.client.screen.Screens.checkScreenRefresh();
                 }
             });
-        });
-        ctx.get().setPacketHandled(true);
+        }
     }
 }
