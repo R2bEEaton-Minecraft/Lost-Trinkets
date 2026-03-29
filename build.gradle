@@ -98,6 +98,22 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
+def mixinRefmap = layout.buildDirectory.file("tmp/compileJava/${mod_id}.refmap.json")
+
+tasks.register('verifyMixinRefmap') {
+    dependsOn tasks.named('compileJava')
+    doLast {
+        def refmapFile = mixinRefmap.get().asFile
+        if (!refmapFile.exists()) {
+            throw new GradleException("Missing generated mixin refmap: ${refmapFile}")
+        }
+    }
+}
+
+tasks.named('jar').configure {
+    dependsOn tasks.named('verifyMixinRefmap')
+}
+
 jar {
     manifest {
         attributes([

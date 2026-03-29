@@ -18,8 +18,8 @@ import java.util.List;
 
 @Mixin(BlockBehaviour.BlockStateBase.class)
 public abstract class AbstractBlockStateMixin {
-    @Inject(method = "getDrops", at = @At("TAIL"), cancellable = true)
-    public void getDrops(LootParams.Builder builder, CallbackInfoReturnable<List<ItemStack>> cir) {
+    @Inject(method = "getDrops(Lnet/minecraft/world/level/storage/loot/LootParams$Builder;)Ljava/util/List;", at = @At("TAIL"), cancellable = true)
+    private void losttrinkets$getDrops(LootParams.Builder builder, CallbackInfoReturnable<List<ItemStack>> cir) {
         BlockState state = (BlockState) (Object) this;
         LootParams context = builder.withParameter(LootContextParams.BLOCK_STATE, state).create(LootContextParamSets.BLOCK);
         List<ItemStack> drops = cir.getReturnValue();
